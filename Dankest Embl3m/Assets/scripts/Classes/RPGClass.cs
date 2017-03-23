@@ -107,7 +107,7 @@ public class RPGClass : MonoBehaviour
     public GameObject[] inventory = new GameObject[5];
 
     //calculate stats that will get passed onto the combat system
-    protected int[] CambatStats()
+    public int[] CombatStats()
     {
         int[] nums;
 
@@ -115,6 +115,8 @@ public class RPGClass : MonoBehaviour
         int Hit;
         int Crit;
         int Dodge;
+        int AttkSpd;
+        int type = 0;
 
         //pull character stats
         int HP = Stats[0].dynamicValue;
@@ -128,13 +130,14 @@ public class RPGClass : MonoBehaviour
         int Blk = Stats[12].dynamicValue;
 
         //pull weapon stats
-        int Might = 0;      //inventory[0].Weapon.Might;
+        int Might = 4;      //inventory[0].Weapon.Might;
         string Type = "Sword";
         int Weight = 0;
-        int HitW = 0;
+        int HitW = 50;
         int CritW = 0;
 
-        if (Blk - Weight < 0) { Spd = Spd + (Blk - Weight); }
+        if (Blk - Weight < 0) { AttkSpd = Spd + (Blk - Weight); }
+        else { AttkSpd = Spd; }
 
         switch (Type)
         {
@@ -143,6 +146,7 @@ public class RPGClass : MonoBehaviour
             case ("Axe"):
             case ("Bow"):
                 Attk = Str + Might;
+                type = 0;
                 break;
 
             case ("Arcane"):
@@ -150,6 +154,7 @@ public class RPGClass : MonoBehaviour
             case ("Dark"):
             case ("Staff"):
                 Attk = Mag + Might;
+                type = 1;
                 break;
         }
 
@@ -157,7 +162,7 @@ public class RPGClass : MonoBehaviour
         Crit = (Skl / 2) + (Luk / 4) + (CritW);
         Dodge = (Spd) + (Luk);
 
-        nums = new int[] { Attk, Hit, Crit, Dodge };
+        nums = new int[] { Attk, Hit, Crit, Dodge, AttkSpd, type };
         return nums;
     }
 

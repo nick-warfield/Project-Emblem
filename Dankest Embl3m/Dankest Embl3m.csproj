@@ -92,16 +92,19 @@
   <ItemGroup>
     <Compile Include="Assets\scripts\Characters\Character.cs" />
     <Compile Include="Assets\scripts\Classes\RPGClass.cs" />
-    <Compile Include="Assets\scripts\mapConstructor.cs" />
-    <Compile Include="Assets\scripts\scratch\combatManager.cs" />
+    <Compile Include="Assets\scripts\GridMap.cs" />
+    <Compile Include="Assets\scripts\Selector.cs" />
+    <Compile Include="Assets\scripts\combatManager.cs" />
+    <Compile Include="Assets\scripts\scratch\ArrayLayout.cs" />
     <Compile Include="Assets\scripts\scratch\displayWorldPosition.cs" />
+    <Compile Include="Assets\scripts\scratch\mapConstructor.cs" />
     <Compile Include="Assets\scripts\scratch\templateClass.cs" />
     <Compile Include="Assets\scripts\scratch\templateClass02.cs" />
     <Compile Include="Assets\scripts\scratch\templateTerrain.cs" />
     <Compile Include="Assets\scripts\scratch\templateUnit.cs" />
+    <Compile Include="Assets\scripts\scratch\unitController.cs" />
     <Compile Include="Assets\scripts\scratch\unitController02.cs" />
     <Compile Include="Assets\scripts\scratch\unitController03.cs" />
-    <Compile Include="Assets\scripts\unitController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />
