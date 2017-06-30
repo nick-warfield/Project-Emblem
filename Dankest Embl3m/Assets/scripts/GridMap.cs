@@ -2,31 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Uncomment this to generate a new map in editor.
 //[ExecuteInEditMode]
 
 public class GridMap : MonoBehaviour
 {
-    public int width;
-    public int height;
-    public int layer;
+    public int width;   //how many tiles wide is the map
+    public int height;  //how many tiles tall is the map
+    public int layer;   //how many layers are there to map (tile layer, unit layer, etc)
 
     public LayerMask hi;
 
+    //for adjusting lerp values
     float increment = 0;
     public float lerpSpeed = 7;
 
-    GameObject backgroundLayer;
-    public GameObject terrainFill;
+    GameObject backgroundLayer;     //the terrain layer of the map
+    public GameObject terrainFill;  //the tiles to fill out the terrain layer with by default
     //public GameObject[] UnitsOnMap;
 
+    //the array that holds all of the gameobjects in use for the level
     public GameObject[,,] MAP;
 
 
     //vvv functions below vvv\\
 
+
+    //fill out the MAP array with in game data
     void InitializeMAP ()
     {
-        Camera.main.transform.position = new Vector3(width / 2, height / 2, -10);
+        Camera.main.transform.position = new Vector3(width / 2f, height / 2f, -10);     //set camera
 
         //set the length, width, and number of layers in the map
         MAP = new GameObject[width, height, layer];
@@ -40,6 +45,7 @@ public class GridMap : MonoBehaviour
         ReadMAP_Data();
     }
 
+    //if the terrain layer has not been made, make one and then fill out with default tiles. This will also place them in the game world
     void CreateTerrainLayer (GameObject tile)
     {
         GameObject terrainLayer = GameObject.Find("Terrain");
@@ -76,6 +82,7 @@ public class GridMap : MonoBehaviour
 
     }
 
+    //create the layer that holds units' information, if it does not exsist
     void CreateUnitLayer ()
     {
         GameObject unitLayer = GameObject.Find("Units");
@@ -121,13 +128,16 @@ public class GridMap : MonoBehaviour
                 for (int j = 0; j < MAP.GetLength(1); j++)
                 {
                     //figure out how to use 2D Physics for some better performance
+
+                    //use a sphere to check each possible location a game object could be
                     Collider[] thingTouching = Physics.OverlapSphere(new Vector3(i + 0.5f, j + 0.5f, k * -1), .25f);
-                    if (thingTouching.GetLength(0) == 1)
+
+                    if (thingTouching.GetLength(0) == 1)    //if only one game object was detected, store that object into the MAP array
                     {
                         MAP[i, j, k] = thingTouching[0].gameObject;
                         //print(MAP[i, j, k].ToString() + ' ' + i + ' ' + j + ' ' + k);
                     }
-                    else
+                    else            //otherwise, 0 object || more than 1 object has been detected. In either case, store a null value in the array.
                     { MAP[i, j, k] = null; }
                 }
             }
@@ -135,6 +145,7 @@ public class GridMap : MonoBehaviour
     }
 
 
+    //WIP. Supposed to streamline my movement. So that other scripts only need to call one function and provide only the start and end place.
     void ChangeMapPosition (GameObject StartArrayPosition, GameObject EndArrayPosition)
     {
         bool updateLocation = true;
@@ -145,13 +156,12 @@ public class GridMap : MonoBehaviour
         //shut off debugging inputs, reset update location so that it can accept new changes
         if (updateLocation == false)
         {
-            for (int i = 0; i < yep.GetLength(0); i++)
-            { yep[i] = false; }
+            //for (int i = 0; i < yep.GetLength(0); i++)
+            //{ yep[i] = false; }
 
             updateLocation = true;
         }
     }
-
 
     //returnining false means the function should not be run anymore
     bool MoveLocation (int StartX, int StartY, int EndX, int EndY, int Layer)
@@ -214,6 +224,61 @@ public class GridMap : MonoBehaviour
         return false;
     }
 
+    //make the game turn based. This will handle switching between turns
+    string TurnTracker (string currentPhase, bool turnEnd)
+    {
+        GameObject[] WorkingUnits = GameObject.FindGameObjectsWithTag(currentPhase);
+
+        //if the user has not asked for their turn to end, check to see if they can still do anything
+        if (!turnEnd)
+        {
+            turnEnd = true;
+            for (int i = 0; i < WorkingUnits.Length; i++)
+            {
+                if (!WorkingUnits[i].GetComponent<RPGClass>().hasMoved)
+                { turnEnd = false; break; }
+            }
+        }
+
+        //if the user want their turn to end
+        if (turnEnd)
+        {
+            do
+            {
+                turnEnd = false;
+
+                if (currentPhase == "Blue Team")
+                { currentPhase = "Green Team"; }
+
+                else if (currentPhase == "Green Team")
+                { currentPhase = "Red Team"; }
+
+                else if (currentPhase == "Red Team")
+                { currentPhase = "Blue Team"; }
+
+
+                WorkingUnits = GameObject.FindGameObjectsWithTag(currentPhase);
+                if (WorkingUnits.Length > 0)
+                {
+                    turnEnd = true;
+
+                    for (int i = 0; i < WorkingUnits.Length; i++)
+                    { WorkingUnits[i].GetComponent<RPGClass>().hasMoved = false; }
+                }
+
+
+            } while (!turnEnd);
+
+            print(currentPhase);
+        }
+
+
+        return currentPhase;
+    }
+    public string currentTurn = "Blue Team";
+
+
+    //initialize MAP array here, i use Awake to make sure I have the array ready if another thing needs to reference it in thier Start loop.
     void Awake ()
     {
         InitializeMAP();
@@ -222,10 +287,16 @@ public class GridMap : MonoBehaviour
 
     private void Update()
     {
+        currentTurn = TurnTracker(currentTurn, false);
+
         //MovementScratch();
     }
 
 
+
+
+
+    /*
     //using for debugging
     bool hola = true;
     bool[] yep = new bool[10];
@@ -299,4 +370,5 @@ public class GridMap : MonoBehaviour
             }
         }
     }
+    */
 }
