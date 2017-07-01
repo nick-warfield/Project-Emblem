@@ -202,7 +202,7 @@ public class Selector : movementManager
                     //PossibleDestinations(thePath[0], 2, mapRef);
                 }
             }
-            else if (!attackCheck)
+            else if (!attackCheck && mapRef[x, y, 1] == null)
             {
                 mapRef[thePath[thePath.Length-1].x, thePath[thePath.Length - 1].y, z - 1] = selectedUnit;
                 selectedUnit.transform.position = new Vector3(thePath[thePath.Length - 1].x, thePath[thePath.Length - 1].y, -1);
@@ -211,7 +211,7 @@ public class Selector : movementManager
                 //selectedUnit = null;
                 //usedMove = 0;
             }
-            else
+            else if (attackCheck)
             {
                 if (mapRef[x, y, 1] != null && mapRef[x, y, 1] != gameObject && range.Contains(x * 1000 + y))
                 {
