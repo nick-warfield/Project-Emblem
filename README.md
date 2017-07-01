@@ -1,2 +1,2 @@
 # Darkest-Emblem
-Creating an old-school Fire Emblem game with a stress system added in
+Combing the gameplay from an old-school Fire Emblem game (along with the advancements I like) with a more tuned stress system from Darkest Dungeon.
