@@ -8,7 +8,13 @@ public class movementManager : MonoBehaviour
     GameObject[,,] mapRef;
     //enum axis { x, y };
 
-    
+    //check arrays
+    protected bool contains (Terrain[] a, Terrain b)
+    {
+        if (a.Contains(b) ) { return true; } 
+        else { return false; }
+    }
+
     //Return all possible selections for moving a unit
     protected Terrain[] PossibleDestinations (Terrain Start, int Movement, GameObject[,,] map)
     {
@@ -185,11 +191,92 @@ public class movementManager : MonoBehaviour
         return closedList.ToArray();
     }
 
-    //find the shortest path between two know points... (WORK IN PROGRESS)
-    Terrain[] DijkstraPath2 (Terrain Start, Terrain End, GameObject[,,] map)
+    //return all tiles in attack range that have not been added to a list already
+    List<Terrain> inRangeTiles (List<Terrain> CurrentList, Terrain Location, int minRange, int maxRange, GameObject[,,] map)
+    {
+        List<Terrain> coordinates = new List<Terrain> { };
+        int x = Location.x;
+        int y = Location.y;
+        int a, b, c;
+        maxRange++;
+
+        //create a diamond around the Location tile
+        for (int i = minRange; i < maxRange; i++)
+        {
+            for (int j = -i; j < i; j++)
+            {
+                for (int k = 0; k < 2; k++)
+                {
+                    Terrain temp;
+
+                    if (k == 0) { c = Mathf.Abs(j) - i; }   //top of diamond
+                    else        { c = -Mathf.Abs(j) + i; }  //bottom of diamond
+                    a = x - j;              //adjusted x
+                    b = y + c;              //adjusted y
+
+                    //check out of bounds, then add tile if it has not already been added
+                    if (a >= 0 && a < map.GetLength(0) && b >= 0 && b < map.GetLength(1))
+                    { temp = map[a, b, 0].GetComponent<Terrain>(); if (!CurrentList.Contains(temp) && !coordinates.Contains(temp)) { coordinates.Add(temp); temp.parent = Location; } }
+                }
+            }
+        }
+
+        return coordinates;
+    }
+
+    protected Terrain[] RedTiles (Terrain[] MoveTiles, RPGClass Unit, GameObject[,,] map)
+    {
+        List<Terrain> aTile = new List<Terrain> { };
+        Terrain temp;
+        int min = Unit.inventory[0].GetComponent<Weapons>().minRange;
+        int max = Unit.inventory[0].GetComponent<Weapons>().maxRange;
+
+        for (int i = 0; i < MoveTiles.Length; i++)
+        {
+            for (int j = min; j <= max; j++)
+            {
+                for (int k = -j; k < j; k++)
+                {
+                    int c = Mathf.Abs(k) - j;
+                    int x = MoveTiles[i].x - k;
+                    int y = MoveTiles[i].y + c;
+
+                    //check out of bounds
+                    if (x >= 0 && x < map.GetLength(0) && y >= 0 && y < map.GetLength(1) )
+                    {
+                        temp = map[x, y, 0].GetComponent<Terrain>();
+                        if (!MoveTiles.Contains(temp) && !aTile.Contains(temp) )
+                        { aTile.Add(temp); temp.parent = MoveTiles[i]; }
+                    }
+
+                    c = -Mathf.Abs(k) + j;
+                    x = MoveTiles[i].x + k;
+                    y = MoveTiles[i].y + c;
+
+                    //check out of bounds
+                    if (x >= 0 && x < map.GetLength(0) && y >= 0 && y < map.GetLength(1))
+                    {
+                        temp = map[x, y, 0].GetComponent<Terrain>();
+                        if (!MoveTiles.Contains(temp) && !aTile.Contains(temp))
+                        { aTile.Add(temp); temp.parent = MoveTiles[i]; }
+                    }
+                }
+            }
+        }
+
+        return aTile.ToArray();
+    }
+
+    //find the shortest path for reaching an attack
+    protected Terrain[] DijkstraAttack(Terrain Start, RPGClass Unit, GameObject[,,] map)
     {
         List<Terrain> visited = new List<Terrain> { Start };    //this list contains the tiles that form the shortest path
         List<Terrain> unvisited = new List<Terrain> { };        //this list contains the tiles being considered to add to the closed list
+        List<Terrain> attacks = new List<Terrain> { };          //this list contains the tiles that can be reached for an attack
+
+        int move = Unit.Stats[11].dynamicValue;
+        int minRange = Unit.inventory[0].GetComponent<Weapons>().minRange;
+        int maxRange = Unit.inventory[0].GetComponent<Weapons>().maxRange;
 
         Terrain mostRecent = Start;
         Terrain temp;
@@ -199,91 +286,53 @@ public class movementManager : MonoBehaviour
         do
         {
             //Add adjacent tiles to the list
-            if (mostRecent.x + 1 < map.GetLength(0))   //right tile
+            for (int i = 0; i < 4; i++)
             {
-                temp = map[mostRecent.x + 1, mostRecent.y, 0].GetComponent<Terrain>();  //so i dont have to use that ugly mapref
-
-                //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall)
+                temp = null;
+                switch (i)
                 {
-                    //if the checked tile is already on the unvisited list, check to see if this new path is shorter
-                    if (unvisited.Contains(temp))
-                    {
-                        if (mostRecent.H + temp.F < temp.H)
-                        { temp.H = mostRecent.H + temp.F; }
-                    }
-                    else    //otherwise, add it to the unvisited list
-                    {
-                        unvisited.Add(temp);
-                        temp.H = mostRecent.H + temp.F;
-                    }
+                    case 0: if (mostRecent.x + 1 < map.GetLength(0)) { temp = map[mostRecent.x + 1, mostRecent.y, 0].GetComponent<Terrain>(); } break;  //right tile
+                    case 1: if (mostRecent.x - 1 >= 0)               { temp = map[mostRecent.x - 1, mostRecent.y, 0].GetComponent<Terrain>(); } break;  //left tile
+                    case 2: if (mostRecent.y + 1 < map.GetLength(1)) { temp = map[mostRecent.x, mostRecent.y + 1, 0].GetComponent<Terrain>(); } break;  //above tile
+                    case 3: if (mostRecent.y - 1 >= 0)               { temp = map[mostRecent.x, mostRecent.y - 1, 0].GetComponent<Terrain>(); } break;  //below tile
                 }
-            }
-
-            if (mostRecent.x - 1 >= 0)      //left tile
-            {
-                temp = map[mostRecent.x - 1, mostRecent.y, 0].GetComponent<Terrain>();
-
-                //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall)
+                //if an existing tile was found
+                if (temp != null)
                 {
-                    //if the checked tile is already on the unvisited list, check to see if this new path is shorter
-                    if (unvisited.Contains(temp))
-                    {
-                        if (mostRecent.H + temp.F < temp.H)
-                        { temp.H = mostRecent.H + temp.F; }
-                    }
-                    else    //otherwise, add it to the unvisited list
-                    {
-                        unvisited.Add(temp);
-                        temp.H = mostRecent.H + temp.F;
-                    }
-                }
-            }
+                    temp.F = Unit.GetAdjustedF(temp);
 
-            if (mostRecent.y + 1 < map.GetLength(1))   //above tile
-            {
-                temp = map[mostRecent.x, mostRecent.y + 1, 0].GetComponent<Terrain>();
-
-                //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall)
-                {
-                    //if the checked tile is already on the unvisited list, check to see if this new path is shorter
-                    if (unvisited.Contains(temp))
+                    //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
+                    if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall && mostRecent.H + temp.F <= move)
                     {
-                        if (mostRecent.H + temp.F < temp.H)
-                        { temp.H = mostRecent.H + temp.F; }
-                    }
-                    else    //otherwise, add it to the unvisited list
-                    {
-                        unvisited.Add(temp);
-                        temp.H = mostRecent.H + temp.F;
-                    }
-                }
-            }
+                        //if the checked tile is already on the unvisited list, check to see if this new path is shorter
+                        if (unvisited.Contains(temp))
+                        {
+                            if (mostRecent.H + temp.F < temp.H)
+                            {
+                                temp.H = mostRecent.H + temp.F;     //update H value
+                                temp.parent = mostRecent;           //update parent
 
-            if (mostRecent.y - 1 >= 0)      //below tile
-            {
-                temp = map[mostRecent.x, mostRecent.y - 1, 0].GetComponent<Terrain>();
+                                List<Terrain> a = inRangeTiles(attacks, temp, minRange, maxRange, map);
+                                for (int k = 0; k < a.Count; k++) { attacks.Add(a[k]); }
+                            }
+                        }
+                        else    //otherwise, add it to the unvisited list
+                        {
+                            unvisited.Add(temp);                //add to unvisited
+                            temp.H = mostRecent.H + temp.F;     //update H for future comparison
+                            temp.parent = mostRecent;           //update parent so a path can be formed as needed
 
-                //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall)
-                {
-                    //if the checked tile is already on the unvisited list, check to see if this new path is shorter
-                    if (unvisited.Contains(temp))
-                    {
-                        if (mostRecent.H + temp.F < temp.H)
-                        { temp.H = mostRecent.H + temp.F; }
-                    }
-                    else    //otherwise, add it to the unvisited list
-                    {
-                        unvisited.Add(temp);
-                        temp.H = mostRecent.H + temp.F;
-                    }
-                }
-            }
+                            List<Terrain> a = inRangeTiles(attacks, temp, minRange, maxRange, map);
+                            for (int k = 0; k < a.Count; k++) { attacks.Add(a[k]); }
+                        }
 
-            //sort list so that the first result has the smallest H value
+                        //check to see if new tiles can be added to the attack list, start by grabing valid adjacent tiles
+                    }
+                }   //temp check
+            }       //for loop
+
+
+            //sort list (lazily) so that the first result has the smallest H value
             for (int i = 1; i < unvisited.Count; i++)
             {
                 if (unvisited[i].H < unvisited[0].H)
@@ -298,14 +347,15 @@ public class movementManager : MonoBehaviour
             unvisited.Remove(unvisited[0]);         //remove the added tile from the unvisited list
             mostRecent = visited.Last<Terrain>();   //update the mostrecent tile
 
-
-
         } while (unvisited.Count > 0);   //if the cost of moving becomes greater than the avaialable movement, stop looping
 
-        //reset the h values for future pathfindings
+        //reset the h values for future pathfindings... parent should not be reset so that it can be used in future.
         for (int i = 0; i < visited.Count; i++) { visited[i].H = Mathf.Infinity; }
 
-        return visited.ToArray();
+        //remove tiles on the visited list from the attack list
+        for (int i = 0; i < attacks.Count; i++) { if (visited.Contains(attacks[i]) ) { attacks.Remove(attacks[i]); } }
+
+        return attacks.ToArray();
     }
 
     //find the shortest path to every tile in range
@@ -323,99 +373,42 @@ public class movementManager : MonoBehaviour
         do
         {
             //Add adjacent tiles to the list
-            if (mostRecent.x + 1 < map.GetLength(0) )   //right tile
+            for (int i = 0; i < 4; i++)
             {
-                temp = map[mostRecent.x + 1, mostRecent.y, 0].GetComponent<Terrain>();  //so i dont have to use that ugly mapref
-                temp.F = Unit.GetAdjustedF(temp);
-
-                //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall && mostRecent.H + temp.F <= move)
+                temp = null;
+                switch (i)
                 {
-                    //if the checked tile is already on the unvisited list, check to see if this new path is shorter
-                    if (unvisited.Contains(temp) )
-                    {
-                        if (mostRecent.H + temp.F < temp.H)
-                        { temp.H = mostRecent.H + temp.F; temp.parent = mostRecent; }
-                    }
-                    else    //otherwise, add it to the unvisited list
-                    {
-                        unvisited.Add(temp);
-                        temp.H = mostRecent.H + temp.F;
-                        temp.parent = mostRecent;
-                    }
+                    case 0: if (mostRecent.x + 1 < map.GetLength(0)) { temp = map[mostRecent.x + 1, mostRecent.y, 0].GetComponent<Terrain>(); } break;  //right tile
+                    case 1: if (mostRecent.x - 1 >= 0)               { temp = map[mostRecent.x - 1, mostRecent.y, 0].GetComponent<Terrain>(); } break;  //left tile
+                    case 2: if (mostRecent.y + 1 < map.GetLength(1)) { temp = map[mostRecent.x, mostRecent.y + 1, 0].GetComponent<Terrain>(); } break;  //above tile
+                    case 3: if (mostRecent.y - 1 >= 0)               { temp = map[mostRecent.x, mostRecent.y - 1, 0].GetComponent<Terrain>(); } break;  //below tile
                 }
-            }
-
-            if (mostRecent.x - 1 >= 0)      //left tile
-            {
-                temp = map[mostRecent.x - 1, mostRecent.y, 0].GetComponent<Terrain>();
-                temp.F = Unit.GetAdjustedF(temp);
-
-                //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall && mostRecent.H + temp.F <= move)
+                //if an existing tile was found
+                if (temp != null)
                 {
-                    //if the checked tile is already on the unvisited list, check to see if this new path is shorter
-                    if (unvisited.Contains(temp))
-                    {
-                        if (mostRecent.H + temp.F < temp.H)
-                        { temp.H = mostRecent.H + temp.F; temp.parent = mostRecent; }
-                    }
-                    else    //otherwise, add it to the unvisited list
-                    {
-                        unvisited.Add(temp);
-                        temp.H = mostRecent.H + temp.F;
-                        temp.parent = mostRecent;
-                    }
-                }
-            }
+                    temp.F = Unit.GetAdjustedF(temp);
 
-            if (mostRecent.y + 1 < map.GetLength(1) )   //above tile
-            {
-                temp = map[mostRecent.x, mostRecent.y + 1, 0].GetComponent<Terrain>();
-                temp.F = Unit.GetAdjustedF(temp);
-
-                //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall && mostRecent.H + temp.F <= move)
-                {
-                    //if the checked tile is already on the unvisited list, check to see if this new path is shorter
-                    if (unvisited.Contains(temp))
+                    //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
+                    if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall && mostRecent.H + temp.F <= move)
                     {
-                        if (mostRecent.H + temp.F < temp.H)
-                        { temp.H = mostRecent.H + temp.F; temp.parent = mostRecent; }
+                        //if the checked tile is already on the unvisited list, check to see if this new path is shorter
+                        if (unvisited.Contains(temp))
+                        {
+                            if (mostRecent.H + temp.F < temp.H)
+                            { temp.H = mostRecent.H + temp.F; temp.parent = mostRecent; }
+                        }
+                        else    //otherwise, add it to the unvisited list
+                        {
+                            unvisited.Add(temp);                //add to unvisited
+                            temp.H = mostRecent.H + temp.F;     //update H for future comparison
+                            temp.parent = mostRecent;           //update parent so a path can be formed as needed
+                        }
                     }
-                    else    //otherwise, add it to the unvisited list
-                    {
-                        unvisited.Add(temp);
-                        temp.H = mostRecent.H + temp.F;
-                        temp.parent = mostRecent;
-                    }
-                }
-            }
+                }   //temp check
+            }       //for loop
 
-            if (mostRecent.y - 1 >= 0)      //below tile
-            {
-                temp = map[mostRecent.x, mostRecent.y - 1, 0].GetComponent<Terrain>();
-                temp.F = Unit.GetAdjustedF(temp);
 
-                //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall && mostRecent.H + temp.F <= move)
-                {
-                    //if the checked tile is already on the unvisited list, check to see if this new path is shorter
-                    if (unvisited.Contains(temp))
-                    {
-                        if (mostRecent.H + temp.F < temp.H)
-                        { temp.H = mostRecent.H + temp.F; temp.parent = mostRecent; }
-                    }
-                    else    //otherwise, add it to the unvisited list
-                    {
-                        unvisited.Add(temp);
-                        temp.H = mostRecent.H + temp.F;
-                        temp.parent = mostRecent;
-                    }
-                }
-            }
-
-            //sort list so that the first result has the smallest H value
+            //sort list (lazily) so that the first result has the smallest H value
             for (int i = 1; i < unvisited.Count; i++)
             {
                 if (unvisited[i].H < unvisited[0].H)
@@ -432,7 +425,7 @@ public class movementManager : MonoBehaviour
 
         } while (unvisited.Count > 0);   //if the cost of moving becomes greater than the avaialable movement, stop looping
 
-        //reset the h values for future pathfindings
+        //reset the h values for future pathfindings... parent should not be reset so that it can be used in future.
         for (int i = 0; i < visited.Count; i++) { visited[i].H = Mathf.Infinity; }
 
         return visited.ToArray();
@@ -473,7 +466,7 @@ public class movementManager : MonoBehaviour
             if (cost > move)
             {
                 //here is where I use aStar pathfinding
-                return DijkstraPath2(currentPath[0], nextTile, map);
+                return null; //DijkstraPath2(currentPath[0], nextTile, map);
             }
             //otherwise, just add the new tile to current path
             else

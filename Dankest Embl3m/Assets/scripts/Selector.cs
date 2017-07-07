@@ -19,6 +19,7 @@ public class Selector : movementManager
 
     Terrain[] thePath;
     Terrain[] openTiles;
+    Terrain[] attackTiles;
 
     // Use this for initialization
     void Start()
@@ -43,6 +44,7 @@ public class Selector : movementManager
                 //PathIndicator(thePath);
                 //MoveIndicator(UnitMove(thePath[0], selectedUnit.GetComponent<RPGClass>(), mapRef).ToArray() );
                 MoveIndicator(openTiles);
+                AttackIndicator2(attackTiles);
                 PathIndicator(thePath);
             }
             else
@@ -86,6 +88,16 @@ public class Selector : movementManager
         }
     }
 
+    //colours attack indicator on move select
+    void AttackIndicator2 (Terrain[] tiles)
+    {
+        for (int i = 0; i < tiles.Length; i++)
+        {
+                GameObject a = Instantiate(AttackUI, new Vector3(tiles[i].x, tiles[i].y), transform.rotation);
+                a.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
+        }
+    }
+
     //colours attack range
     List<int> AttackIndicator (Terrain Location, int minRange, int maxRange)
     {
@@ -118,17 +130,6 @@ public class Selector : movementManager
         }
 
         return coordinates;
-    }
-
-    //check range
-    bool CheckRange (int x, int y, int minRange, int maxRange)
-    {
-        bool inRange = false;
-
-
-
-
-        return inRange;
     }
 
 
@@ -217,6 +218,7 @@ public class Selector : movementManager
                     thePath[0] = mapRef[x, y, z - 2].GetComponent<Terrain>();
 
                     openTiles = DijkstraPath(thePath[0], selectedUnit.GetComponent<RPGClass>(), mapRef);
+                    attackTiles = RedTiles(openTiles, selectedUnit.GetComponent<RPGClass>(), mapRef);
                     //PossibleDestinations(thePath[0], 2, mapRef);
                 }
             }
@@ -253,8 +255,10 @@ public class Selector : movementManager
             selectedUnit.transform.position = new Vector3(thePath[0].x, thePath[0].y, -1);
             attackCheck = false;
             selectedUnit = null;
+
             thePath = new Terrain[0];
             openTiles = new Terrain[0];
+            attackTiles = new Terrain[0];
         }
 
 
