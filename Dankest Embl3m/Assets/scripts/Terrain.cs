@@ -16,8 +16,13 @@ public class Terrain : MonoBehaviour
     public int defenseBonus;
     public int heal;
 
-    public int x;
-    public int y;
+    [HideInInspector] public int x;
+    [HideInInspector] public int y;
+
+    [HideInInspector] public float F;
+    [HideInInspector] public float G;
+    [HideInInspector] public float H = Mathf.Infinity;
+    [HideInInspector] public Terrain parent;
 
     GameObject[,,] mapRef;
 

@@ -18,6 +18,7 @@ public class Selector : movementManager
     //int heyo = 0;
 
     Terrain[] thePath;
+    Terrain[] openTiles;
 
     // Use this for initialization
     void Start()
@@ -38,7 +39,12 @@ public class Selector : movementManager
         if (selectedUnit != null)   //if a unit is selected,  move them around with the selector
         {
             if (!attackCheck)
-            { PathIndicator(thePath); }
+            {
+                //PathIndicator(thePath);
+                //MoveIndicator(UnitMove(thePath[0], selectedUnit.GetComponent<RPGClass>(), mapRef).ToArray() );
+                MoveIndicator(openTiles);
+                PathIndicator(thePath);
+            }
             else
             {
                 Weapons weapon = selectedUnit.GetComponent<RPGClass>().inventory[0].GetComponent<Weapons>();
@@ -66,6 +72,17 @@ public class Selector : movementManager
 
             GameObject pUI = Instantiate(PathUI, new Vector3(px, py), transform.rotation);
             pUI.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
+        }
+    }
+
+    //colours available tiles
+    void MoveIndicator (Terrain[] tiles)
+    {
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            GameObject m = Instantiate(PathUI, new Vector3(tiles[i].x, tiles[i].y), transform.rotation);
+            m.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
+            m.GetComponent<SpriteRenderer>().color = new Color(m.GetComponent<SpriteRenderer>().color.r, m.GetComponent<SpriteRenderer>().color.g, m.GetComponent<SpriteRenderer>().color.b, 0.25f);
         }
     }
 
@@ -128,7 +145,7 @@ public class Selector : movementManager
             {
                 nextTile = mapRef[x, y + 1, 0].GetComponent<Terrain>();
                 maxMove = selectedUnit.GetComponent<RPGClass>().Stats[11].staticValue;
-                thePath = gridPathfindingArray(thePath, nextTile, maxMove);
+                thePath = gridPathfindingArray(openTiles, thePath, nextTile, maxMove);
             }
 
             mapRef[x, y, z] = null;
@@ -144,7 +161,7 @@ public class Selector : movementManager
             {
                 nextTile = mapRef[x, y - 1, 0].GetComponent<Terrain>();
                 maxMove = selectedUnit.GetComponent<RPGClass>().Stats[11].staticValue;
-                thePath = gridPathfindingArray(thePath, nextTile, maxMove);
+                thePath = gridPathfindingArray(openTiles, thePath, nextTile, maxMove);
             }
 
             mapRef[x, y, z] = null;
@@ -160,7 +177,7 @@ public class Selector : movementManager
             {
                 nextTile = mapRef[x - 1, y, 0].GetComponent<Terrain>();
                 maxMove = selectedUnit.GetComponent<RPGClass>().Stats[11].staticValue;
-                thePath = gridPathfindingArray(thePath, nextTile, maxMove);
+                thePath = gridPathfindingArray(openTiles, thePath, nextTile, maxMove);
             }
 
             mapRef[x, y, z] = null;
@@ -176,7 +193,7 @@ public class Selector : movementManager
             {
                 nextTile = mapRef[x + 1, y, 0].GetComponent<Terrain>();
                 maxMove = selectedUnit.GetComponent<RPGClass>().Stats[11].staticValue;
-                thePath = gridPathfindingArray(thePath, nextTile, maxMove);
+                thePath = gridPathfindingArray(openTiles, thePath, nextTile, maxMove);
             }
 
             mapRef[x, y, z] = null;
@@ -199,6 +216,7 @@ public class Selector : movementManager
                     thePath = new Terrain[1];
                     thePath[0] = mapRef[x, y, z - 2].GetComponent<Terrain>();
 
+                    openTiles = DijkstraPath(thePath[0], selectedUnit.GetComponent<RPGClass>(), mapRef);
                     //PossibleDestinations(thePath[0], 2, mapRef);
                 }
             }
@@ -235,6 +253,8 @@ public class Selector : movementManager
             selectedUnit.transform.position = new Vector3(thePath[0].x, thePath[0].y, -1);
             attackCheck = false;
             selectedUnit = null;
+            thePath = new Terrain[0];
+            openTiles = new Terrain[0];
         }
 
 

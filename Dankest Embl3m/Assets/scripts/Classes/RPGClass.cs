@@ -333,6 +333,12 @@ public class RPGClass : MonoBehaviour
         return value;
     }
 
+    //checks a tile and adjusts the cost of traveling it so that units can have unique movement rules (eg: flying units can travel anything for 1 cost)
+    public virtual int GetAdjustedF (Terrain Tile)
+    {
+        return Tile.movementCost;
+    }
+
 
     //bad things happen to units at max stress
     protected virtual void BreakingPoint ()
