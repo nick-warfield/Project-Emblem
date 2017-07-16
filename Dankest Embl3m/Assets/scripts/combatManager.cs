@@ -179,6 +179,13 @@ public class combatManager : MonoBehaviour
         int AUDmg = AUStats[0] - DUDef;
         int DUDmg = DUStats[0] - AUDef;
 
+        //Healing
+        if (AUStats[6] == 7)
+        {
+            if (AU.tag == DU.tag) { AUDmg = -AUStats[0]; AUHit = 100; DUDmg = 0; spdDiff = 0; print(AUDmg); }
+            else { AUDmg = 0; }
+        }
+
         //Attacker Phase
         if (Random.Range(0, 100) <= AUHit)
         {
@@ -366,5 +373,7 @@ public class combatManager : MonoBehaviour
             else { timeStamp[3] = timeStamp[2] + 0.2f; timeStamp[2] = 0; }
         }
 
+        cr.AttackingUnit.GetComponent<RPGClass>().ClampHP();
+        cr.DefendingUnit.GetComponent<RPGClass>().ClampHP();
     }
 }

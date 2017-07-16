@@ -409,6 +409,12 @@ public class RPGClass : MonoBehaviour
 
     }
 
+    //keep hp beetween 0 and max value
+    public void ClampHP ()
+    {
+        if (Stats[0].dynamicValue < 0) { Stats[0].dynamicValue = 0; }
+        else if (Stats[0].dynamicValue > Stats[0].staticValue) { Stats[0].dynamicValue = Stats[0].staticValue; }
+    }
 
     private void Start()
     {

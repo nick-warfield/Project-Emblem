@@ -69,7 +69,6 @@ public class GridMap : MonoBehaviour
             }
         }
 
-
         //for (int i = 0; i < MAP.GetLength(0); i++)
         //{
         //    for (int j = 0; j < MAP.GetLength(1); j++)

@@ -249,6 +249,7 @@ public class Selector : movementManager
             }
         }
 
+        //deselect
         else if (Input.GetKeyDown(KeyCode.Backspace) && selectedUnit != null)
         {
             mapRef[thePath[0].x, thePath[0].y, 1] = selectedUnit;
@@ -261,6 +262,23 @@ public class Selector : movementManager
             attackTiles = new Terrain[0];
         }
 
+        /*
+        //bring up stat menu
+        else if (Input.GetKeyDown(KeyCode.Return) )
+        {
+            GameObject u = null;    //temp var
+
+            if (mapRef[x, y, 1] != null)    //if a unit is being hovered then use that
+            { u = mapRef[x, y, 1]; }
+            else if (selectedUnit != null)  //if not but something is selected, use that instead
+            {u = selectedUnit; }
+
+            if (u != null)      //if something valid was found
+            {
+                //if I have a unit that I can check the stats of, pass data to something
+            }
+        }
+        */
 
         /*
         else if (Input.GetKeyDown(KeyCode.LeftShift) && selectedUnit == null)
