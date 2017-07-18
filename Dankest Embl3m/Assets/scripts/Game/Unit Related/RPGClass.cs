@@ -139,8 +139,8 @@ public class RPGClass : MonoBehaviour
         int Blk = Stats[12].dynamicValue;
 
         //check weapon compatability, then add a bonus if applicable. Otherwise unit is unarmed
-        char WeaponRank = inventory[0].GetComponent<Weapons>().Rank;
-        string Type = inventory[0].GetComponent<Weapons>().WeaponType;
+        char WeaponRank = 'E'; //inventory[0].GetComponent<Weapons>().Rank;
+        string Type = "Sword";//inventory[0].GetComponent<Weapons>().WeaponType;
 
         //char[] AvailableWeapons = new char[7];
         //for (int i = 0; i < 7; i++) { AvailableWeapons[i] = useableWeapons[i].weaponRank; }
@@ -161,10 +161,10 @@ public class RPGClass : MonoBehaviour
         //pull weapon stats
         int Might = inventory[0].GetComponent<Weapons>().Might;
         //string Type = inventory[0].GetComponent<Weapons>().WeaponType;
-        string dmgType = inventory[0].GetComponent<Weapons>().DamageType;
+        string dmgType = "Physical";//inventory[0].GetComponent<Weapons>().DamageType;
         int Weight = inventory[0].GetComponent<Weapons>().Weight;
-        int HitW = inventory[0].GetComponent<Weapons>().Hit;
-        int CritW = inventory[0].GetComponent<Weapons>().Crit;
+        int HitW = inventory[0].GetComponent<Weapons>().HitChance;
+        int CritW = inventory[0].GetComponent<Weapons>().CritChance;
 
         if (Blk - Weight < 0) { AttkSpd = Spd + (Blk - Weight); }
         else { AttkSpd = Spd; }
