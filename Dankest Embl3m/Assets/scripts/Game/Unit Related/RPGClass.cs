@@ -291,7 +291,7 @@ public class RPGClass : MonoBehaviour
             if (Stats[i].staticValue < Stats[i].maxValue)
             {
                 float numRolled = Random.value * 100;                                       //the number rolled, each stat gets its own roll
-                float charGrowth = GetComponent<Character>().growthRates[i].growthRate;     //the growth rate attached to the character, usually 0 for fodder enemies
+                float charGrowth = 0f; // GetComponent<Character>().growthRates[i].growthRate;     //the growth rate attached to the character, usually 0 for fodder enemies
                 float GrowthNum = Stats[i].growthRate + charGrowth;                         //class growth + character growth. The number to roll under in order to increase the stat. So the higher this number is, the more likely it is to go up.
 
                 int statIncrease = 0;       //keep track of how much a stat has been rasied by

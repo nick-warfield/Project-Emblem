@@ -26,7 +26,7 @@ public class getUnitInfo : MonoBehaviour {
         if (mapRef[x, y, 1] != null)
         {
             RPGClass unit = mapRef[x, y, 1].GetComponent<RPGClass>();
-            string name = mapRef[x, y, 1].GetComponent<Character>().characterName;
+            string name = mapRef[x, y, 1].GetComponent<Character>().CharacterName;
             txt.text = name + "\nHP: " + unit.Stats[0].dynamicValue + "/" + unit.Stats[0].staticValue + "\nSP: " + unit.Stats[1].dynamicValue + "/" + unit.Stats[1].staticValue;
         }
     }
