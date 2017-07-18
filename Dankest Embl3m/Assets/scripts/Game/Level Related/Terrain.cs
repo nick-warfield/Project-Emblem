@@ -4,44 +4,31 @@ using UnityEngine;
 
 public class Terrain : MonoBehaviour
 {
-    public string tileName;
+    //used to determine how Units will interact with the tile
+    public enum Tile { Wall, Plain, Forrest, Fort };
+    public Tile Type;
 
-    
-    public enum tileTag { Wall, Plain, Forrest, Fort };
-    public tileTag Tag;
-    tileTag ogTag;
+    //Tile Stats, how much an average unit pays to travel it, plus any bonuses the terrain offers
+    public int MovementCost;
+    public int DodgeBonus;
+    public int DefenseBonus;
+    public int HealPercent;
 
-    public int movementCost;
-    public int dodgeBonus;
-    public int defenseBonus;
-    public int heal;
-
+    //Used to make referencing easier, just converts transform position into x and y ints.
     [HideInInspector] public int x;
     [HideInInspector] public int y;
 
+    //probably need to update this section when I touch up pathfinding
     [HideInInspector] public float F;
     [HideInInspector] public float G;
     [HideInInspector] public float H = Mathf.Infinity;
     [HideInInspector] public Terrain parent;
 
-    GameObject[,,] mapRef;
-
 
     // Use this for initialization
     void Start()
     {
-        mapRef = GameObject.Find("Director").GetComponent<GridMap>().MAP;
         x = Mathf.RoundToInt(transform.position.x);
         y = Mathf.RoundToInt(transform.position.y);
-        ogTag = Tag;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (mapRef[x, y, 1] != null && mapRef[x, y, 1].tag == "Red Team")
-        { Tag = tileTag.Wall; }
-        else
-        { Tag = ogTag; }
     }
 }

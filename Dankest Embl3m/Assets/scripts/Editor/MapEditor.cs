@@ -93,7 +93,7 @@ public class MapEditor : EditorWindow
         if (x >= 0 && x < TerrainManip.GetLength(0) && y >= 0 && y < TerrainManip.GetLength(1))
         {
             Terrain temp = TerrainManip[x, y];
-            temp.Tag = (Terrain.tileTag)EditorGUILayout.EnumPopup("New Type:", temp.Tag);
+            temp.Type = (Terrain.Tile)EditorGUILayout.EnumPopup("New Type:", temp.Type);
         }
 
         EditorGUILayout.EndHorizontal();
@@ -160,7 +160,7 @@ public class MapEditor : EditorWindow
         {
             for (int j = 0; j < TerrainManip.GetLength(1); j++)
             {
-                string path = "Assets/Prefabs/Terrain/" + TerrainManip[i, j].Tag.ToString() + ".prefab";
+                string path = "Assets/Prefabs/Terrain/" + TerrainManip[i, j].Type.ToString() + ".prefab";
                 Terrain load = AssetDatabase.LoadAssetAtPath<Terrain>(path);
                 GameObject tile = PrefabUtility.InstantiatePrefab(load.gameObject) as GameObject;
 

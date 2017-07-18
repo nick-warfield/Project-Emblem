@@ -135,10 +135,10 @@ public class combatManager : MonoBehaviour
         int[] DUStats = DU.GetComponent<RPGClass>().CombatStats();
 
         int spdDiff = AUStats[4] - DUStats[4];                                                          //compares the speed between two units, allows for a unit to attack twice
-        int AUHit = AUStats[1] - DUStats[3] - defenderTerrain.GetComponent<Terrain>().dodgeBonus;       //determines how likely the attacker is going to hit
-        int DUHit = DUStats[1] - AUStats[3] - attackerTerrain.GetComponent<Terrain>().dodgeBonus;       //determines how likely the defender is going to hit
-        int AUDef = attackerTerrain.GetComponent<Terrain>().defenseBonus;                               //adds any defense bonus from terrain to the attacker
-        int DUDef = defenderTerrain.GetComponent<Terrain>().defenseBonus;                               //adds any defense bonus from terrain to the defender
+        int AUHit = AUStats[1] - DUStats[3] - defenderTerrain.GetComponent<Terrain>().DodgeBonus;       //determines how likely the attacker is going to hit
+        int DUHit = DUStats[1] - AUStats[3] - attackerTerrain.GetComponent<Terrain>().DodgeBonus;       //determines how likely the defender is going to hit
+        int AUDef = attackerTerrain.GetComponent<Terrain>().DefenseBonus;                               //adds any defense bonus from terrain to the attacker
+        int DUDef = defenderTerrain.GetComponent<Terrain>().DefenseBonus;                               //adds any defense bonus from terrain to the defender
 
         if (AUStats[5] == 0) { DUDef += DU.GetComponent<RPGClass>().Stats[6].dynamicValue; }            //grabs defense for physical attacks
         else { DUDef += DU.GetComponent<RPGClass>().Stats[7].dynamicValue; }                            //grabs resistance for magical attacks

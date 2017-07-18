@@ -302,7 +302,7 @@ public class movementManager : MonoBehaviour
                     temp.F = Unit.GetAdjustedF(temp);
 
                     //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                    if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall && mostRecent.H + temp.F <= move)
+                    if (!visited.Contains(temp) && temp.Type != Terrain.Tile.Wall && mostRecent.H + temp.F <= move)
                     {
                         //if the checked tile is already on the unvisited list, check to see if this new path is shorter
                         if (unvisited.Contains(temp))
@@ -389,7 +389,7 @@ public class movementManager : MonoBehaviour
                     temp.F = Unit.GetAdjustedF(temp);
 
                     //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
-                    if (!visited.Contains(temp) && temp.Tag != Terrain.tileTag.Wall && mostRecent.H + temp.F <= move)
+                    if (!visited.Contains(temp) && temp.Type != Terrain.Tile.Wall && mostRecent.H + temp.F <= move)
                     {
                         //if the checked tile is already on the unvisited list, check to see if this new path is shorter
                         if (unvisited.Contains(temp))
