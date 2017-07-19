@@ -14,6 +14,14 @@ public class Character : MonoBehaviour
     public enum _State { Idle, Selected, Walking, Waiting, InCombat, Downed, Dead, Rescued, Traumatized };
     public _State CurrentState = _State.Idle;
 
+    //The Character's X and Y coordinates, hidden in inspector. Plus a little function to update them using position
+    [HideInInspector] int X, Y;
+    public void UpdateCoordinatesWithTransformPosition ()
+    {
+        X = Mathf.RoundToInt(transform.position.x);
+        Y = Mathf.RoundToInt(transform.position.y);
+    }
+
     //The Character's Name and Description, defaults are provided.
     public string CharacterName = "Soldier", CharacterDescription = "A grunt of the Empire's Military.";
     public bool FodderCharacter = true;
@@ -122,10 +130,19 @@ public class Character : MonoBehaviour
         charBOX.size = new Vector3(0.5f, 0.5f, 2);
     }
 
+    private void Awake()
+    {
+        //Make sure Coordinates are initialized early so that they can be referenced by managers in their start functions
+        UpdateCoordinatesWithTransformPosition();
+    }
+
     private void Start()
     {
         //Assign a Horoscope Randomly
         if (Horoscope == Horoscopes.Random)
         { Horoscope = (Horoscopes)Random.Range(0, 11); }
+
+        //Snap character into allignment
+        transform.position = new Vector3(X, Y, -1);
     }
 }
