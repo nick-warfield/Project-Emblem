@@ -228,8 +228,8 @@ public class movementManager : MonoBehaviour
     {
         List<Terrain> aTile = new List<Terrain> { };
         Terrain temp;
-        int min = Unit.inventory[0].GetComponent<Weapons>().minRange;
-        int max = Unit.inventory[0].GetComponent<Weapons>().maxRange;
+        int min = Unit.Inventory[0].GetComponent<Weapons>().minRange;
+        int max = Unit.Inventory[0].GetComponent<Weapons>().maxRange;
 
         for (int i = 0; i < MoveTiles.Length; i++)
         {
@@ -275,8 +275,8 @@ public class movementManager : MonoBehaviour
         List<Terrain> attacks = new List<Terrain> { };          //this list contains the tiles that can be reached for an attack
 
         int move = Unit.Stats[11].dynamicValue;
-        int minRange = Unit.inventory[0].GetComponent<Weapons>().minRange;
-        int maxRange = Unit.inventory[0].GetComponent<Weapons>().maxRange;
+        int minRange = Unit.Inventory[0].GetComponent<Weapons>().minRange;
+        int maxRange = Unit.Inventory[0].GetComponent<Weapons>().maxRange;
 
         Terrain mostRecent = Start;
         Terrain temp;

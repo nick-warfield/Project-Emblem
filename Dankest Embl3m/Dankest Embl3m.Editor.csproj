@@ -139,6 +139,7 @@
   <ItemGroup>
     <Compile Include="Assets\scripts\Editor\CustomArrayPropertyDrawer.cs" />
     <Compile Include="Assets\scripts\Editor\MapEditor.cs" />
+    <Compile Include="Assets\scripts\Editor\ReadOnlyAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />

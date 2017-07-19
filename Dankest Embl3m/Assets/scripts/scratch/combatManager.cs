@@ -131,8 +131,8 @@ public class combatManager : MonoBehaviour
 
 
         //int[attack, hit, crit, dodge, spd, damageType(0=physical/1=magical), weapondID(0sword/1lance/2axe/3bow/4arcane/5light/6dark/7staff]
-        int[] AUStats = AU.GetComponent<RPGClass>().CombatStats();
-        int[] DUStats = DU.GetComponent<RPGClass>().CombatStats();
+        int[] AUStats = new int[7]; //AU.GetComponent<RPGClass>().CombatStats();
+        int[] DUStats = new int[7]; //DU.GetComponent<RPGClass>().CombatStats();
 
         int spdDiff = AUStats[4] - DUStats[4];                                                          //compares the speed between two units, allows for a unit to attack twice
         int AUHit = AUStats[1] - DUStats[3] - defenderTerrain.GetComponent<Terrain>().DodgeBonus;       //determines how likely the attacker is going to hit
@@ -286,8 +286,8 @@ public class combatManager : MonoBehaviour
         //SpriteRenderer rend;
         if (timeStamp[0] == 0 && timeStamp[1] == 0 && timeStamp[2] == 0 && timeStamp[3] == 0)
         {
-            Sprite aSpr = cr.AttackingUnit.GetComponent<RPGClass>().classSprites.combatSprite[0];
-            Sprite dSpr = cr.DefendingUnit.GetComponent<RPGClass>().classSprites.combatSprite[0];
+            Sprite aSpr = cr.AttackingUnit.GetComponent<RPGClass>().SpriteSheets.Attack[0];
+            Sprite dSpr = cr.DefendingUnit.GetComponent<RPGClass>().SpriteSheets.Attack[0];
 
             LeftUnit.GetComponent<SpriteRenderer>().sprite = aSpr;
             RightUnit.GetComponent<SpriteRenderer>().sprite = dSpr;
@@ -373,7 +373,7 @@ public class combatManager : MonoBehaviour
             else { timeStamp[3] = timeStamp[2] + 0.2f; timeStamp[2] = 0; }
         }
 
-        cr.AttackingUnit.GetComponent<RPGClass>().ClampHP();
-        cr.DefendingUnit.GetComponent<RPGClass>().ClampHP();
+        //cr.AttackingUnit.GetComponent<RPGClass>().ClampHP();
+        //cr.DefendingUnit.GetComponent<RPGClass>().ClampHP();
     }
 }

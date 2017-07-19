@@ -49,7 +49,7 @@ public class Selector : movementManager
             }
             else
             {
-                Weapons weapon = selectedUnit.GetComponent<RPGClass>().inventory[0].GetComponent<Weapons>();
+                Weapons weapon = selectedUnit.GetComponent<RPGClass>().Inventory[0].GetComponent<Weapons>();
 
                 int tx = Mathf.RoundToInt(selectedUnit.transform.position.x);
                 int ty = Mathf.RoundToInt(selectedUnit.transform.position.y);
@@ -209,7 +209,7 @@ public class Selector : movementManager
             //select or deselect depending on current state
             if (selectedUnit == null)
             {
-                if (!mapRef[x, y, z - 1].GetComponent<RPGClass>().hasMoved)
+                if (mapRef[x, y, z - 1].GetComponent<RPGClass>().CurrentState == RPGClass._State.Waiting)
                 {
                     selectedUnit = mapRef[x, y, z - 1];
                     mapRef[x, y, z - 1] = null;
@@ -243,7 +243,7 @@ public class Selector : movementManager
 
                     comMan.runCombat = true;
                 }
-                selectedUnit.GetComponent<RPGClass>().hasMoved = true;
+                selectedUnit.GetComponent<RPGClass>().CurrentState = RPGClass._State.Waiting;
                 selectedUnit = null;
                 attackCheck = false;
             }

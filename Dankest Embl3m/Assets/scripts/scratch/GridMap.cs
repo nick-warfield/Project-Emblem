@@ -234,7 +234,7 @@ public class GridMap : MonoBehaviour
             turnEnd = true;
             for (int i = 0; i < WorkingUnits.Length; i++)
             {
-                if (!WorkingUnits[i].GetComponent<RPGClass>().hasMoved)
+                if (WorkingUnits[i].GetComponent<RPGClass>().CurrentState == RPGClass._State.Waiting)
                 { turnEnd = false; break; }
             }
         }
@@ -262,7 +262,7 @@ public class GridMap : MonoBehaviour
                     turnEnd = true;
 
                     for (int i = 0; i < WorkingUnits.Length; i++)
-                    { WorkingUnits[i].GetComponent<RPGClass>().hasMoved = false; }
+                    { WorkingUnits[i].GetComponent<RPGClass>().CurrentState = RPGClass._State.Waiting; }
                 }
 
 

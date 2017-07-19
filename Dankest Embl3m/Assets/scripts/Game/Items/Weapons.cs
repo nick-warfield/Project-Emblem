@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapons : MonoBehaviour
+public class Weapons : Items
 {
     //These stats identify the weapon and what are the requirements to use it
-    public string Name;
-    public enum WeaponType { Sword, Axe, Lance, Arcane, Divine, Occult, Bow, Staff };
+    public enum WeaponType { Sword, Axe, Lance, Arcane, Divine, Occult, Bow, Staff, Unarmed };
     public WeaponType WeaponCategory;
     public enum Damage { Physical, Magical };
     public Damage DamageType;
@@ -20,9 +19,4 @@ public class Weapons : MonoBehaviour
     public int HitChance = 90;
     public int CritChance;
     public int Weight;
-    public int Durability;
-
-    //How much it costs to buy/sell this weapon
-    public int Buy;
-    public int Sell;
 }
