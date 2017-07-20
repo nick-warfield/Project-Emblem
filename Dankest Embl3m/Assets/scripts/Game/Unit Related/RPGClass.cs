@@ -140,7 +140,7 @@ public class RPGClass : Character
 
     //I'll change this when I want to adjust my pathfinding
     //checks a tile and adjusts the cost of traveling it so that units can have unique movement rules (eg: flying units can travel anything for 1 cost)
-    public virtual int GetAdjustedF (Terrain Tile)
+    public virtual int AdjustTileMovementCost (Terrain Tile)
     {
         return Tile.MovementCost;
     }

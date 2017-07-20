@@ -19,10 +19,10 @@ public class Terrain : MonoBehaviour
     [HideInInspector] public int y;
 
     //probably need to update this section when I touch up pathfinding
-    [HideInInspector] public float F;
+    [HideInInspector] public float EstimatedMovementCost = Mathf.Infinity, F;
     [HideInInspector] public float G;
     [HideInInspector] public float H = Mathf.Infinity;
-    [HideInInspector] public Terrain parent;
+    [HideInInspector] public Terrain Parent, parent;
 
 
     // Use this for initialization

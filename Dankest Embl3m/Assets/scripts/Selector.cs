@@ -209,7 +209,7 @@ public class Selector : movementManager
             //select or deselect depending on current state
             if (selectedUnit == null)
             {
-                if (mapRef[x, y, z - 1].GetComponent<RPGClass>().CurrentState == RPGClass._State.Waiting)
+                if (mapRef[x, y, z - 1].GetComponent<RPGClass>().CurrentState == RPGClass._State.Idle)
                 {
                     selectedUnit = mapRef[x, y, z - 1];
                     mapRef[x, y, z - 1] = null;

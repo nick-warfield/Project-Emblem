@@ -38,16 +38,16 @@ public class Map : MonoBehaviour
             }
             else    //if all the other checks failed, then we have incremented y twice and there are no more tiles to be loaded in
             {
-                y--;    //decrement y so we have the correct number of rows
+                //y--;    //decrement y so we have the correct number of rows
                 x = ter.Count / y;  //get x by dividing the total number of tiles found by the number of rows. This works if the map is a perfect rectangle with no holes
                 TerrainMap = new Terrain[x, y];     //allocate my array
 
                 int k = 0;  //k is used to cycle through the 1 dimensonal list
-                for (int i = 0; i < x; i++)
+                for (int i = 0; i < y; i++)
                 {
-                    for (int j = 0; j < y; j++)
+                    for (int j = 0; j < x; j++)
                     {
-                        TerrainMap[i, j] = ter[k];  //load list data into array in a correctly formated manner
+                        TerrainMap[j, i] = ter[k];  //load list data into array in a correctly formated manner
                         k++;
                     }
                 }
@@ -57,6 +57,18 @@ public class Map : MonoBehaviour
             }
         }
         while (!didYIncrementTwiceInARow);
+    }
+
+    //In case I want to make sure that my indexes are lining up correctly
+    void CheckIndexMatchPosition ()
+    {
+        for (int i = 0; i < TerrainMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < TerrainMap.GetLength(1); j++)
+            {
+                print("Index: [" + i + ", " + j + "] = " + TerrainMap[i, j].name);
+            }
+        }
     }
 
     private void Awake()

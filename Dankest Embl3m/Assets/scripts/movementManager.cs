@@ -16,7 +16,7 @@ public class movementManager : MonoBehaviour
     }
 
     //Return all possible selections for moving a unit
-    protected Terrain[] PossibleDestinations (Terrain Start, int Movement, GameObject[,,] map)
+    Terrain[] PossibleDestinations (Terrain Start, int Movement, GameObject[,,] map)
     {
         //I'll probably reference these a lot, so i'll store them locally
         int xStart = Start.x;
@@ -67,7 +67,7 @@ public class movementManager : MonoBehaviour
     }
 
     //colours and returns abialable tiles a selected unit can move to
-    protected List<Terrain> UnitMove (Terrain Start, RPGClass Unit, GameObject[,,] Map)
+    List<Terrain> UnitMove (Terrain Start, RPGClass Unit, GameObject[,,] Map)
     {
         //create the list I will eventually return, add the starting tile because of course a unit can go there
         List<Terrain> available = new List<Terrain> { Start };
@@ -268,7 +268,7 @@ public class movementManager : MonoBehaviour
     }
 
     //find the shortest path for reaching an attack
-    protected Terrain[] DijkstraAttack(Terrain Start, RPGClass Unit, GameObject[,,] map)
+    Terrain[] DijkstraAttack(Terrain Start, RPGClass Unit, GameObject[,,] map)
     {
         List<Terrain> visited = new List<Terrain> { Start };    //this list contains the tiles that form the shortest path
         List<Terrain> unvisited = new List<Terrain> { };        //this list contains the tiles being considered to add to the closed list
@@ -299,7 +299,7 @@ public class movementManager : MonoBehaviour
                 //if an existing tile was found
                 if (temp != null)
                 {
-                    temp.F = Unit.GetAdjustedF(temp);
+                    temp.F = Unit.AdjustTileMovementCost(temp);
 
                     //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
                     if (!visited.Contains(temp) && temp.Type != Terrain.Tile.Wall && mostRecent.H + temp.F <= move)
@@ -386,7 +386,7 @@ public class movementManager : MonoBehaviour
                 //if an existing tile was found
                 if (temp != null)
                 {
-                    temp.F = Unit.GetAdjustedF(temp);
+                    temp.F = Unit.AdjustTileMovementCost(temp);
 
                     //ignore the tile if i have already visited it, or it is a wall, or there is not enough movement to pay for it
                     if (!visited.Contains(temp) && temp.Type != Terrain.Tile.Wall && mostRecent.H + temp.F <= move)
@@ -432,7 +432,7 @@ public class movementManager : MonoBehaviour
     }
 
     //adjust current path if the desired tile is open but out of reach... (WORK IN PROGRESS)
-    protected Terrain[] UpdatePath (Terrain[] OpenTiles, Terrain[] currentPath, Terrain nextTile, int move, GameObject[,,] map)
+    Terrain[] UpdatePath (Terrain[] OpenTiles, Terrain[] currentPath, Terrain nextTile, int move, GameObject[,,] map)
     {
         //if the desired tile is not an open tile, ignore it and return the current path
         if (!OpenTiles.Contains<Terrain>(nextTile))

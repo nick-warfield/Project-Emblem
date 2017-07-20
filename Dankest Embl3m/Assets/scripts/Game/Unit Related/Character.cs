@@ -15,11 +15,11 @@ public class Character : MonoBehaviour
     public _State CurrentState = _State.Idle;
 
     //The Character's X and Y coordinates, hidden in inspector. Plus a little function to update them using position
-    [HideInInspector] int X, Y;
+    [HideInInspector] public int x, y;
     public void UpdateCoordinatesWithTransformPosition ()
     {
-        X = Mathf.RoundToInt(transform.position.x);
-        Y = Mathf.RoundToInt(transform.position.y);
+        x = Mathf.RoundToInt(transform.position.x);
+        y = Mathf.RoundToInt(transform.position.y);
     }
 
     //The Character's Name and Description, defaults are provided.
@@ -143,6 +143,6 @@ public class Character : MonoBehaviour
         { Horoscope = (Horoscopes)Random.Range(0, 11); }
 
         //Snap character into allignment
-        transform.position = new Vector3(X, Y, -1);
+        transform.position = new Vector3(x, y, -1);
     }
 }
