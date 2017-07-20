@@ -72,56 +72,6 @@ public class TacticsBehaviour : MonoBehaviour
 
         return visited.ToArray();
     }
-    protected Terrain[] DijkstraAlgorithm(RPGClass Unit, Weapons EquipedWeapon, Terrain[,] Map)
-    {
-        //Grab Starting Coordinates
-        int x = Unit.x, y = Unit.y;
-
-        List<Terrain> visited = new List<Terrain> { Map[x, y] };    //this list contains the tiles that form the shortest path
-        List<Terrain> unvisited = new List<Terrain> { };        //this list contains the tiles being considered to add to the closed list
-        //List<Terrain> inRange = new List<Terrain> { };              //this list contains the tiles that can be reached for attack
-
-        Terrain mostRecent = Map[x, y];
-        Terrain temp;
-
-        mostRecent.EstimatedMovementCost = 0;
-
-        do
-        {
-            //Add adjacent tiles to the list
-            for (int i = 0; i < 4; i++)
-            {
-                //Grab a neighbor to the mostRecent tile
-                temp = GrabNeighbors(i, mostRecent, Map);
-
-                //if an existing tile was found, do some checks and update the lists accordingly
-                if (temp != null)
-                { UpdatePathfindingListsDijstra(temp, mostRecent, visited, unvisited, EquipedWeapon.minRange, EquipedWeapon.maxRange + Unit.Stats[(int)RPGClass.Stat.Move].dynamicValue); }
-            }
-
-
-            //sort list (lazily) so that the first result has the smallest H value
-            for (int i = 1; i < unvisited.Count; i++)
-            {
-                if (unvisited[i].EstimatedMovementCost < unvisited[0].EstimatedMovementCost)
-                {
-                    temp = unvisited[0];
-                    unvisited[0] = unvisited[i];
-                    unvisited[i] = temp;
-                }
-            }
-
-            visited.Add(unvisited[0]);              //add the unvisted tile with the smallest F value to the visited list
-            unvisited.Remove(unvisited[0]);         //remove the added tile from the unvisited list
-            mostRecent = visited.Last();            //update the mostrecent tile
-
-        } while (unvisited.Count > 0);   //stop looping once the unvisited list becomes empty
-
-        //reset the h values for future pathfindings... parent should not be reset so that it can be used in future.
-        for (int i = 0; i < visited.Count; i++) { visited[i].EstimatedMovementCost = Mathf.Infinity; }
-
-        return visited.ToArray();
-    }
     protected Terrain[] DijkstraAlgorithm(Terrain StartTile, Terrain[,] Map)
     {
         //Grab Starting Coordinates

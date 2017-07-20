@@ -51,12 +51,49 @@ public class LevelManager : TacticsBehaviour
         { return ShortenPath(NewTile, CurrentPath[0]); }
     }
 
+    //Adds the Range of the weapon to the movelist
+    Terrain[] ExapandMoveListWithWeaponRange(Weapons Weapon, Terrain[] MoveList, Terrain[,] Map)
+    {
+        List<Terrain> inRange = new List<Terrain> { };
+        Vector2 Coordinates1 = Vector2.zero;
+        Vector2 Coordinates2 = Vector2.zero;
+
+        for (int i = 0; i < MoveList.Length; i++)
+        {
+            for (int j = Weapon.minRange; j < Weapon.maxRange; j++)
+            {
+                for (int k = -j; k < j; k++)
+                {
+                    Coordinates1 = new Vector2(MoveList[i].x - k, MoveList[i].y + Mathf.Abs(k) - j);
+                    Coordinates2 = new Vector2(MoveList[i].x + k, MoveList[i].y - Mathf.Abs(k) + j);
+                }
+            }
+
+            if (BoundsCheck(Coordinates1, Map) )
+            {
+                Terrain Tile = Map[Mathf.RoundToInt(Coordinates1.x), Mathf.RoundToInt(Coordinates1.y)];
+
+                if (!PathContains(Tile, inRange.ToArray()) )
+                { inRange.Add(Tile); }
+            }
+
+            if (BoundsCheck(Coordinates2, Map))
+            {
+                Terrain Tile = Map[Mathf.RoundToInt(Coordinates2.x), Mathf.RoundToInt(Coordinates2.y)];
+
+                if (!PathContains(Tile, inRange.ToArray()))
+                { inRange.Add(Tile); }
+            }
+        }
+
+        return null;
+    }
 
     public void SetSelectedUnit(RPGClass Unit, Terrain[,] Map)
     {
         SelectedUnit = Unit;
         AvailableTilesForTravel = DijkstraAlgorithm(Unit, Map);
-        //AvailableTilesForAttack = DijkstraAlgorithm(Unit, (Weapons)Unit.Inventory[0], Map);
+        AvailableTilesForAttack = ExapandMoveListWithWeaponRange((Weapons)Unit.Inventory[0], AvailableTilesForTravel, Map);
         Path = new Terrain[1] { Map[Unit.x, Unit.y] };
     }
 
@@ -78,6 +115,9 @@ public class LevelManager : TacticsBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        if(Input.GetButton("Fire1") )
+        { print("FIRE"); }
+
         //Placeholder, Input Manager will generate events or something that will get recieved here
         bool movedetected = false;
 
