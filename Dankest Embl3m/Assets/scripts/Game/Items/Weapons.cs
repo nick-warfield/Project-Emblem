@@ -7,8 +7,13 @@ public class Weapons : Items
     //These stats identify the weapon and what are the requirements to use it
     public enum WeaponType { Sword, Axe, Lance, Arcane, Divine, Occult, Bow, Staff, Unarmed };
     public WeaponType WeaponCategory;
+
+    public enum WeaponEffect { Basic, DoubleStrike, FirstStrike, ReverseTriangle, Slayer };
+    public WeaponEffect Effect;
+
     public enum Damage { Physical, Magical };
     public Damage DamageType;
+
     public enum Rank { Untrained, E, D, C, B, A, S };
     public Rank WeaponRank = Rank.E;
 

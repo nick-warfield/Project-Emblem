@@ -4,13 +4,23 @@ using UnityEngine;
 
 public class CombatStats : MonoBehaviour
 {
+    public int Health = 0;
+    public int Stress = 0;
+
     public int Attack = 0;
     public int HitChance = 0;
     public int CritChance = 0;
-    public int DodgeChance = 0;
-    public int AttackSpeed;
+
+    public int Dodge = 0;
+    public int CriticalDodge = 0;
+    public int AttackSpeed = 0;
+
     public Weapons.Damage DamageType;
 
+    public Weapons EquipedWeapon;
+
+    public int Defense;
+    public int Resistance;
 
     private void Reset()
     {
@@ -21,25 +31,27 @@ public class CombatStats : MonoBehaviour
     public void SetCombatStats ()
     {
         RPGClass Unit = GetComponent<RPGClass>();
-        int[] temp = CalculateCombatStats(Unit.Stats, Unit.WeaponStats, Unit.Inventory);
 
+        EquipedWeapon = EquipWeapon(Unit.Inventory, Unit.WeaponStats);
+        Health = Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue;
+        Stress= Unit.Stats[(int)RPGClass.Stat.StressPoints].dynamicValue;
+
+        int[] temp = CalculateCombatStats(Unit.Stats, Unit.WeaponStats, EquipedWeapon);
         Attack = temp[0];
         HitChance = temp[1];
         CritChance = temp[2];
-        DodgeChance = temp[3];
+        Dodge = temp[3];
         AttackSpeed = temp[4];
         DamageType = (Weapons.Damage)temp[5];
+        Defense = temp[6];
+        Resistance = temp[7];
+
+        CriticalDodge = Unit.Stats[(int)RPGClass.Stat.Luck].dynamicValue;
     }
 
-    //calculate stats that will get passed onto the combat system
-    int[] CalculateCombatStats(RPGClass.ClassStats[] UnitStats, RPGClass.ClassWeapons[] WeaponProficencies, Items[] Inventory)
+    //Equip the first elligible weapon
+    Weapons EquipWeapon(Items[] Inventory, RPGClass.ClassWeapons[] WeaponProficencies)
     {
-        //Declare some of the final stats that will get passed on.
-        int attack = 0, hitChance = 0, critChance = 0, dodgeChance = 0, attackSpeed = 0;
-
-        //Find the Equiped Weapon
-        Weapons EquipedWeapon = null;// = new Weapons { WeaponCategory = Weapons.WeaponType.Unarmed };
-
         //loop through inventory
         for (int i = 0; i < 5; i++)
         {
@@ -53,10 +65,22 @@ public class CombatStats : MonoBehaviour
                 for (int j = 0; j < 8; j++)
                 {
                     if (WeaponProficencies[j].WeaponCategory == temp.WeaponCategory && WeaponProficencies[j].WeaponRank >= temp.WeaponRank)
-                    { EquipedWeapon = temp; print(temp + "Equiped"); i = 10; break; }
+                    { print(temp + "Equiped"); i = 10; return temp; }
                 }
             }
         }
+
+        return null;
+    }
+
+    //calculate stats that will get passed onto the combat system
+    int[] CalculateCombatStats(RPGClass.ClassStats[] UnitStats, RPGClass.ClassWeapons[] WeaponProficencies, Weapons Weapon)
+    {
+        //Declare some of the final stats that will get passed on.
+        int attack = 0, hitChance = 0, critChance = 0, dodgeChance = 0, attackSpeed = 0;
+
+        //Find the Equiped Weapon
+        //Weapons EquipedWeapon = EquipWeapon(Inventory, WeaponProficencies);
 
         //Return Unarmed Here if Applicable
 
@@ -67,35 +91,39 @@ public class CombatStats : MonoBehaviour
         int Skill = UnitStats[(int)RPGClass.Stat.Skill].dynamicValue;
         int Luck = UnitStats[(int)RPGClass.Stat.Luck].dynamicValue;
         int Bulk = UnitStats[(int)RPGClass.Stat.Bulk].dynamicValue;
-        Weapons.Rank WeaponSkill = WeaponProficencies[(int)EquipedWeapon.WeaponCategory].WeaponRank;
+        Weapons.Rank WeaponSkill = WeaponProficencies[(int)Weapon.WeaponCategory].WeaponRank;
 
 
         //Do calculations to determine the final stats
         //Determine attack Speed
         attackSpeed = Speed;
-        if (Bulk >= EquipedWeapon.Weight) { attackSpeed += (Bulk - EquipedWeapon.Weight); }
+        if (Bulk >= Weapon.Weight) { attackSpeed += (Bulk - Weapon.Weight); }
 
         //Determine Weapon Bonuses
-        int[] bonuses = GetWeaponBonuses(EquipedWeapon.WeaponCategory, WeaponSkill);
+        int[] bonuses = GetWeaponBonuses(Weapon.WeaponCategory, WeaponSkill);
 
         //Determine Hit, Crit, and Dodge Chances
-        hitChance = (Skill * 2) + (Luck / 2) + EquipedWeapon.HitChance;
-        critChance = (Skill * 2) + (Luck / 4) + EquipedWeapon.CritChance;
+        hitChance = (Skill * 2) + (Luck / 2) + Weapon.HitChance;
+        critChance = (Skill * 2) + (Luck / 4) + Weapon.CritChance;
         dodgeChance = (attackSpeed * 2) + Luck;
 
         //Determine Damage and Damage Type
-        Weapons.Damage damageType = EquipedWeapon.DamageType;
+        Weapons.Damage damageType = Weapon.DamageType;
         if (DamageType == Weapons.Damage.Physical)
-        { attack = Strength + EquipedWeapon.Might; }
+        { attack = Strength + Weapon.Might; }
         else if (DamageType == Weapons.Damage.Magical)
-        { attack = Magic + EquipedWeapon.Might; }
+        { attack = Magic + Weapon.Might; }
 
         //Apply Bonuses
         attack += bonuses[0];
         hitChance += bonuses[1];
 
+        //Grab Defenses
+        int defense = UnitStats[(int)RPGClass.Stat.Defense].dynamicValue;
+        int resistance = UnitStats[(int)RPGClass.Stat.Resistance].dynamicValue;
+
         //Return Results
-        return new int[6] { attack, hitChance, critChance, dodgeChance, attackSpeed, (int)damageType };
+        return new int[8] { attack, hitChance, critChance, dodgeChance, attackSpeed, (int)damageType, defense, resistance};
     }
 
     //Determine Weapon Bonuses
