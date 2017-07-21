@@ -105,7 +105,11 @@ public class LevelManager : Map
 
     public void SetSelectedUnit(RPGClass Unit, Terrain[,] Map)
     {
+        if (Unit == null) { return; }
+
         SelectedUnit = Unit;
+        SelectedUnit.CurrentState = Character._State.Selected;
+
         AvailableTilesForTravel = DijkstraAlgorithm(Unit, Map);
         AvailableTilesForAttack = ExapandMoveListWithWeaponRange((Weapons)Unit.Inventory[0], AvailableTilesForTravel, Map);
         Path = new Terrain[1] { Map[Unit.x, Unit.y] };
@@ -119,32 +123,72 @@ public class LevelManager : Map
         RedTiles = tempRed.ToArray();
         
     }
-    public void DeselectUnit()
+    public void DeselectUnit(Character._State NewState)
     {
+        SelectedUnit.CurrentState = NewState;
         SelectedUnit = null;
+
         AvailableTilesForTravel = new Terrain[0];
         AvailableTilesForAttack = new Terrain[0];
         Path = new Terrain[0];
         RedTiles = new Terrain[0];
     }
 
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update ()
     {
+        //I've pretty much started up a state machine here, I'll hold off on fleshing it out until I make my own Input manager and figure out the turn stuff
+
+        //If no unit is selected, these actions become available
         if (SelectedUnit == null)
         {
-            //Basically, I only want to run these calculations when a new tile is suggested to be added. Not every frame as would happen with update
-            if (Input.GetButtonDown("Submit"))
+            //On input, check to see if a unit can be selected
+            if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit") )
             { SetSelectedUnit(Cursor.GetUnitAtCursorPosition(), LevelMap); }
         }
+
+        //If a unit is selected, these actions are available
         else
         {
-            Path = UpdateCurrentPath(LevelMap[Cursor.x, Cursor.y], SelectedUnit, Path, AvailableTilesForTravel);
+            //On deselect action, put unit back at the start of the path and then deselect it
+            if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
+            {
+                SelectedUnit.x = Path[0].x; SelectedUnit.y = Path[0].y;
+                DeselectUnit(Character._State.Idle);
+            }
 
-            DisplayIndicator(Indicators[1], AvailableTilesForTravel);
-            DisplayIndicator(Indicators[0], Path);
-            DisplayIndicator(Indicators[2], RedTiles);
+            //If a deselect action is not requested
+            else
+            {
+                //Update the path only while the character has not been moved
+                if (SelectedUnit.CurrentState == Character._State.Selected)
+                { Path = UpdateCurrentPath(LevelMap[Cursor.x, Cursor.y], SelectedUnit, Path, AvailableTilesForTravel); }
+
+                //Put up some indicators for movement, current pathm and attackable tiles
+                DisplayIndicator(Indicators[1], AvailableTilesForTravel);
+                DisplayIndicator(Indicators[0], Path);
+                DisplayIndicator(Indicators[2], RedTiles);
+
+                //If a select input is requested do one of the following
+                if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
+                {
+                    //If the unit is in the selected state, set it to the walking state and update it's location
+                    if (SelectedUnit.CurrentState == Character._State.Selected)
+                    {
+                        SelectedUnit.CurrentState = Character._State.Walking;
+
+                        SelectedUnit.x = Path[Path.Length - 1].x;
+                        SelectedUnit.y = Path[Path.Length - 1].y;
+                    }
+
+                    //If a unit is in the walking state, deselect it and put it in the waiting state since it can no longer be moved this turn
+                    else if (SelectedUnit.CurrentState == Character._State.Walking)
+                    {
+                        DeselectUnit(Character._State.Waiting);
+                    }
+                }
+            }
         }
 	}
 }

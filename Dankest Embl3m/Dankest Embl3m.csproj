@@ -84,11 +84,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\scripts\DestroyOnBoolNotReset.cs" />
-    <Compile Include="Assets\scripts\Director.cs" />
     <Compile Include="Assets\scripts\Game\Items\Items.cs" />
     <Compile Include="Assets\scripts\Game\Items\Weapons.cs" />
     <Compile Include="Assets\scripts\Game\Level Related\Map.cs" />
+    <Compile Include="Assets\scripts\Game\Level Related\Selector.cs" />
     <Compile Include="Assets\scripts\Game\Level Related\Terrain.cs" />
     <Compile Include="Assets\scripts\Game\Managers\CombatManager.cs" />
     <Compile Include="Assets\scripts\Game\Managers\InputManager.cs" />
@@ -98,16 +97,18 @@
     <Compile Include="Assets\scripts\Game\Unit Related\Character.cs" />
     <Compile Include="Assets\scripts\Game\Unit Related\CombatStats.cs" />
     <Compile Include="Assets\scripts\Game\Unit Related\RPGClass.cs" />
-    <Compile Include="Assets\scripts\Selector.cs" />
-    <Compile Include="Assets\scripts\movementManager.cs" />
-    <Compile Include="Assets\scripts\preventOverlap.cs" />
+    <Compile Include="Assets\scripts\Game\Utility\DestroyOnBoolNotReset.cs" />
+    <Compile Include="Assets\scripts\Game\Utility\Director.cs" />
+    <Compile Include="Assets\scripts\Game\Utility\preventOverlap.cs" />
     <Compile Include="Assets\scripts\scratch\ArrayLayout.cs" />
     <Compile Include="Assets\scripts\scratch\GridMap.cs" />
     <Compile Include="Assets\scripts\scratch\LevelInfo.cs" />
+    <Compile Include="Assets\scripts\scratch\SelectorScratch.cs" />
     <Compile Include="Assets\scripts\scratch\combatManager.cs" />
     <Compile Include="Assets\scripts\scratch\displayWorldPosition.cs" />
     <Compile Include="Assets\scripts\scratch\getUnitInfo.cs" />
     <Compile Include="Assets\scripts\scratch\mapConstructor.cs" />
+    <Compile Include="Assets\scripts\scratch\movementManager.cs" />
     <Compile Include="Assets\scripts\scratch\templateClass.cs" />
     <Compile Include="Assets\scripts\scratch\templateClass02.cs" />
     <Compile Include="Assets\scripts\scratch\templateTerrain.cs" />

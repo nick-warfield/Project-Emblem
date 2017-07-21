@@ -145,4 +145,7 @@ public class Character : MonoBehaviour
         //Snap character into allignment
         transform.position = new Vector3(x, y, -1);
     }
+
+    private void Update()
+    { transform.position = new Vector3(x, y, transform.position.z); }
 }

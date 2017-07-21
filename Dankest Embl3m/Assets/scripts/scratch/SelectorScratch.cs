@@ -2,52 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Selector : MonoBehaviour
-{
-    //[HideInInspector]
-    public int x, y;
-    public float x2, y2;
 
-
-    public RPGClass GetUnitAtCursorPosition()
-    {
-        RPGClass[] units = GameObject.FindObjectsOfType<RPGClass>();
-
-        for (int i = 0; i < units.Length; i++)
-        {
-            if (units[i].x == x && units[i].y == y)
-            { return units[i]; }
-        }
-
-        return null;
-    }
-
-
-    private void Start()
-    {
-        x2 = x = Mathf.RoundToInt(transform.position.x);
-        y2 = y = Mathf.RoundToInt(transform.position.y);
-
-        transform.position = new Vector3(x, y, -2);
-    }
-
-
-    private void Update()
-    {
-        x2 += 0.2f * System.Math.Sign(Input.GetAxis("Horizontal") );   //for some reason unity thinks 0 is a positive number
-        y2 += 0.2f * System.Math.Sign(Input.GetAxis("Vertical") );
-
-        x = Mathf.RoundToInt(x2);
-        y = Mathf.RoundToInt(y2);
-
-        transform.position = new Vector3(x, y, -2);
-    }
-
-
-}
-
-
-public class Selector2 : movementManager
+public class SelectorScratch : movementManager
 {
     GameObject[,,] mapRef;
     combatManager comMan;
@@ -110,7 +66,7 @@ public class Selector2 : movementManager
 
 
     //colours the current path to provide some feedback
-    void PathIndicator (Terrain[] currentPath)
+    void PathIndicator(Terrain[] currentPath)
     {
         for (int i = 0; i < currentPath.Length; i++)
         {
@@ -123,7 +79,7 @@ public class Selector2 : movementManager
     }
 
     //colours available tiles
-    void MoveIndicator (Terrain[] tiles)
+    void MoveIndicator(Terrain[] tiles)
     {
         for (int i = 0; i < tiles.Length; i++)
         {
@@ -134,17 +90,17 @@ public class Selector2 : movementManager
     }
 
     //colours attack indicator on move select
-    void AttackIndicator2 (Terrain[] tiles)
+    void AttackIndicator2(Terrain[] tiles)
     {
         for (int i = 0; i < tiles.Length; i++)
         {
-                GameObject a = Instantiate(AttackUI, new Vector3(tiles[i].x, tiles[i].y), transform.rotation);
-                a.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
+            GameObject a = Instantiate(AttackUI, new Vector3(tiles[i].x, tiles[i].y), transform.rotation);
+            a.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
         }
     }
 
     //colours attack range
-    List<int> AttackIndicator (Terrain Location, int minRange, int maxRange)
+    List<int> AttackIndicator(Terrain Location, int minRange, int maxRange)
     {
         List<int> coordinates = new List<int> { };
 
@@ -158,7 +114,7 @@ public class Selector2 : movementManager
             for (int j = -i; j < i; j++)
             {
                 int k = Mathf.Abs(j) - i;
-                aUI = Instantiate(AttackUI, new Vector3(x-j, y+k), transform.rotation);
+                aUI = Instantiate(AttackUI, new Vector3(x - j, y + k), transform.rotation);
                 aUI.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
 
                 k = ((x - j) * 1000) + (y + k);
@@ -166,7 +122,7 @@ public class Selector2 : movementManager
 
 
                 k = -Mathf.Abs(j) + i;
-                aUI = Instantiate(AttackUI, new Vector3(x+j, y+k), transform.rotation);
+                aUI = Instantiate(AttackUI, new Vector3(x + j, y + k), transform.rotation);
                 aUI.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
 
                 k = ((x - j) * 1000) + (y + k);
@@ -201,7 +157,7 @@ public class Selector2 : movementManager
         }
 
         //move down
-        else if ((Input.GetKeyDown("s") || Input.GetKeyDown("down")) && y-1 >= 0)
+        else if ((Input.GetKeyDown("s") || Input.GetKeyDown("down")) && y - 1 >= 0)
         {
             if (selectedUnit != null && !attackCheck)
             {
@@ -217,7 +173,7 @@ public class Selector2 : movementManager
         }
 
         //move left
-        else if ((Input.GetKeyDown("a") || Input.GetKeyDown("left")) && x-1 >= 0)
+        else if ((Input.GetKeyDown("a") || Input.GetKeyDown("left")) && x - 1 >= 0)
         {
             if (selectedUnit != null && !attackCheck)
             {
@@ -233,7 +189,7 @@ public class Selector2 : movementManager
         }
 
         //move right
-        else if ((Input.GetKeyDown("d") || Input.GetKeyDown("right")) && x+1 < mapRef.GetLength(0))
+        else if ((Input.GetKeyDown("d") || Input.GetKeyDown("right")) && x + 1 < mapRef.GetLength(0))
         {
             if (selectedUnit != null && !attackCheck)
             {
@@ -269,7 +225,7 @@ public class Selector2 : movementManager
             }
             else if (!attackCheck && mapRef[x, y, 1] == null)
             {
-                mapRef[thePath[thePath.Length-1].x, thePath[thePath.Length - 1].y, z - 1] = selectedUnit;
+                mapRef[thePath[thePath.Length - 1].x, thePath[thePath.Length - 1].y, z - 1] = selectedUnit;
                 selectedUnit.transform.position = new Vector3(thePath[thePath.Length - 1].x, thePath[thePath.Length - 1].y, -1);
                 attackCheck = true;
 
@@ -372,7 +328,7 @@ public class Selector2 : movementManager
                 heyo = selectedUnit.GetComponent<RPGClass>().MovementLeft(usedMove, nextTile.movementCost, nextTile.tileName);
                 usedMove += heyo;
             }
-            
+
             if (heyo != 0 || selectedUnit == null)
             {
                 mapRef[x, y, z] = null;
@@ -486,3 +442,4 @@ public class Selector2 : movementManager
     */
 
 }
+
