@@ -4,9 +4,9 @@ using UnityEngine;
 
 //MAPS MUST BE RECTANGLES WITH NO HOLES
 //Creates and holds the map data so that it can be accessed and altered as needed.
-public class Map : MonoBehaviour
+public class Map : TacticsBehaviour
 {
-    public Terrain[,] TerrainMap;   //Holds the terrain data. Formatted so that indexes correspond to transforms.
+    public Terrain[,] LevelMap;   //Holds the terrain data. Formatted so that indexes correspond to transforms.
 
     //collides a sphere against the node of a tile, then stores the gameobject collided with.
     void StoreTilesIntoArray()
@@ -40,14 +40,14 @@ public class Map : MonoBehaviour
             {
                 //y--;    //decrement y so we have the correct number of rows
                 x = ter.Count / y;  //get x by dividing the total number of tiles found by the number of rows. This works if the map is a perfect rectangle with no holes
-                TerrainMap = new Terrain[x, y];     //allocate my array
+                LevelMap = new Terrain[x, y];     //allocate my array
 
                 int k = 0;  //k is used to cycle through the 1 dimensonal list
                 for (int i = 0; i < y; i++)
                 {
                     for (int j = 0; j < x; j++)
                     {
-                        TerrainMap[j, i] = ter[k];  //load list data into array in a correctly formated manner
+                        LevelMap[j, i] = ter[k];  //load list data into array in a correctly formated manner
                         k++;
                     }
                 }
@@ -62,11 +62,11 @@ public class Map : MonoBehaviour
     //In case I want to make sure that my indexes are lining up correctly
     void CheckIndexMatchPosition ()
     {
-        for (int i = 0; i < TerrainMap.GetLength(0); i++)
+        for (int i = 0; i < LevelMap.GetLength(0); i++)
         {
-            for (int j = 0; j < TerrainMap.GetLength(1); j++)
+            for (int j = 0; j < LevelMap.GetLength(1); j++)
             {
-                print("Index: [" + i + ", " + j + "] = " + TerrainMap[i, j].name);
+                print("Index: [" + i + ", " + j + "] = " + LevelMap[i, j].name);
             }
         }
     }

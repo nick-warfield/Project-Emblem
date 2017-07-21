@@ -5,7 +5,7 @@ using System.Linq;
 
 public class movementManager : MonoBehaviour
 {
-    GameObject[,,] mapRef;
+    //GameObject[,,] mapRef;
     //enum axis { x, y };
 
     //check arrays
@@ -21,7 +21,6 @@ public class movementManager : MonoBehaviour
         //I'll probably reference these a lot, so i'll store them locally
         int xStart = Start.x;
         int yStart = Start.y;
-        int F = 0;
 
         //start a list to store my tiles, i'll be checking this as i go along to prevent duplicates
         List<Terrain> tiles = new List<Terrain>() { Start };
@@ -86,7 +85,7 @@ public class movementManager : MonoBehaviour
                 {
                     if (a >= 0 && a < Map.GetLength(0) && b >= 0 && b < Map.GetLength(1))
                     {
-                        Terrain t = Map[a, b, 0].GetComponent<Terrain>();
+                        //Terrain t = Map[a, b, 0].GetComponent<Terrain>();
 
                         //if (!available.Contains(t) && t.Tag != Terrain.tileTag.Wall && aStarPathfinding(Start, t, Unit, Map) )
                         //{
@@ -574,6 +573,6 @@ public class movementManager : MonoBehaviour
 
 	void Start ()
     {
-        mapRef = GameObject.Find("Director").GetComponent<GridMap>().MAP;
+        //mapRef = GameObject.Find("Director").GetComponent<GridMap>().MAP;
 	}
 }

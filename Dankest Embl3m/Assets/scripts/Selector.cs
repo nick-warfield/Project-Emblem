@@ -2,7 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Selector : movementManager
+public class Selector : MonoBehaviour
+{
+    //[HideInInspector]
+    public int x, y;
+    public float x2, y2;
+
+
+    public RPGClass GetUnitAtCursorPosition()
+    {
+        RPGClass[] units = GameObject.FindObjectsOfType<RPGClass>();
+
+        for (int i = 0; i < units.Length; i++)
+        {
+            if (units[i].x == x && units[i].y == y)
+            { return units[i]; }
+        }
+
+        return null;
+    }
+
+
+    private void Start()
+    {
+        x2 = x = Mathf.RoundToInt(transform.position.x);
+        y2 = y = Mathf.RoundToInt(transform.position.y);
+
+        transform.position = new Vector3(x, y, -2);
+    }
+
+
+    private void Update()
+    {
+        x2 += 0.2f * System.Math.Sign(Input.GetAxis("Horizontal") );   //for some reason unity thinks 0 is a positive number
+        y2 += 0.2f * System.Math.Sign(Input.GetAxis("Vertical") );
+
+        x = Mathf.RoundToInt(x2);
+        y = Mathf.RoundToInt(y2);
+
+        transform.position = new Vector3(x, y, -2);
+    }
+
+
+}
+
+
+public class Selector2 : movementManager
 {
     GameObject[,,] mapRef;
     combatManager comMan;

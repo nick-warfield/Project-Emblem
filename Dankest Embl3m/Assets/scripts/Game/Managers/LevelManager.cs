@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelManager : TacticsBehaviour
+public class LevelManager : Map
 {
-    Terrain[,] MapReference;
     RPGClass SelectedUnit;
-    public Terrain[] AvailableTilesForTravel;
-    public Terrain[] AvailableTilesForAttack;
-    public Terrain[] Path;
+    public Selector Cursor;
+    public GameObject[] Indicators;
+
+    [HideInInspector] public Terrain[] AvailableTilesForTravel;
+    [HideInInspector] public Terrain[] AvailableTilesForAttack;
+    [HideInInspector] public Terrain[] Path;
+    [HideInInspector] public Terrain[] RedTiles;
 
 
     //Updates the path a unit will travel
@@ -36,7 +39,7 @@ public class LevelManager : TacticsBehaviour
             {
                 Terrain[] NewPath = new Terrain[CurrentPath.Length + 1];
 
-                for (int j = 0; j < NewPath.Length; j++)
+                for (int j = 0; j < CurrentPath.Length; j++)
                 { NewPath[j] = CurrentPath[j]; }
                 NewPath[CurrentPath.Length] = NewTile;
 
@@ -50,7 +53,6 @@ public class LevelManager : TacticsBehaviour
         else
         { return ShortenPath(NewTile, CurrentPath[0]); }
     }
-
     //Adds the Range of the weapon to the movelist
     Terrain[] ExapandMoveListWithWeaponRange(Weapons Weapon, Terrain[] MoveList, Terrain[,] Map)
     {
@@ -60,12 +62,12 @@ public class LevelManager : TacticsBehaviour
 
         for (int i = 0; i < MoveList.Length; i++)
         {
-            for (int j = Weapon.minRange; j < Weapon.maxRange; j++)
+            for (int j = Weapon.minRange; j <= Weapon.maxRange; j++)
             {
                 for (int k = -j; k < j; k++)
                 {
-                    Coordinates1 = new Vector2(MoveList[i].x - k, MoveList[i].y + Mathf.Abs(k) - j);
-                    Coordinates2 = new Vector2(MoveList[i].x + k, MoveList[i].y - Mathf.Abs(k) + j);
+                    Coordinates1 = new Vector2(MoveList[i].x - k, MoveList[i].y + Mathf.Abs(k) - j); //print(Coordinates1);
+                    Coordinates2 = new Vector2(MoveList[i].x + k, MoveList[i].y - Mathf.Abs(k) + j); //print(Coordinates2);
                 }
             }
 
@@ -86,8 +88,19 @@ public class LevelManager : TacticsBehaviour
             }
         }
 
-        return null;
+        return inRange.ToArray();
     }
+
+    //Spawns ui tiles to show where i can travel to
+    private void DisplayIndicator(GameObject Indicator, Terrain[] Tiles)
+    {
+        for (int i = 0; i < Tiles.Length; i++)
+        {
+            GameObject ind = Instantiate(Indicator, new Vector3(Tiles[i].x, Tiles[i].y), transform.rotation);
+            ind.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
+        }
+    }
+
 
     public void SetSelectedUnit(RPGClass Unit, Terrain[,] Map)
     {
@@ -95,36 +108,42 @@ public class LevelManager : TacticsBehaviour
         AvailableTilesForTravel = DijkstraAlgorithm(Unit, Map);
         AvailableTilesForAttack = ExapandMoveListWithWeaponRange((Weapons)Unit.Inventory[0], AvailableTilesForTravel, Map);
         Path = new Terrain[1] { Map[Unit.x, Unit.y] };
+        
+        List<Terrain> tempRed = new List<Terrain> { };
+        for (int i = 0; i < AvailableTilesForAttack.Length; i++)
+        {
+            if (!PathContains(AvailableTilesForAttack[i], AvailableTilesForTravel) )
+            { tempRed.Add(AvailableTilesForAttack[i]); }
+        }
+        RedTiles = tempRed.ToArray();
+        
     }
-
     public void DeselectUnit()
     {
         SelectedUnit = null;
         AvailableTilesForTravel = new Terrain[0];
         AvailableTilesForAttack = new Terrain[0];
         Path = new Terrain[0];
+        RedTiles = new Terrain[0];
     }
 
-
-	// Use this for initialization
-	void Start ()
-    {
-        MapReference = FindObjectOfType<Map>().TerrainMap;
-	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        if(Input.GetButton("Fire1") )
-        { print("FIRE"); }
-
-        //Placeholder, Input Manager will generate events or something that will get recieved here
-        bool movedetected = false;
-
-        //Basically, I only want to run these calculations when a new tile is suggested to be added. Not every frame as would happen with update
-        if (movedetected)
+        if (SelectedUnit == null)
         {
-            UpdateCurrentPath(MapReference[SelectedUnit.x, SelectedUnit.y], SelectedUnit, Path, AvailableTilesForTravel);
+            //Basically, I only want to run these calculations when a new tile is suggested to be added. Not every frame as would happen with update
+            if (Input.GetButtonDown("Submit"))
+            { SetSelectedUnit(Cursor.GetUnitAtCursorPosition(), LevelMap); }
+        }
+        else
+        {
+            Path = UpdateCurrentPath(LevelMap[Cursor.x, Cursor.y], SelectedUnit, Path, AvailableTilesForTravel);
+
+            DisplayIndicator(Indicators[1], AvailableTilesForTravel);
+            DisplayIndicator(Indicators[0], Path);
+            DisplayIndicator(Indicators[2], RedTiles);
         }
 	}
 }

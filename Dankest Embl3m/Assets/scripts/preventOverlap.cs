@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class preventOverlap : MonoBehaviour {
-
+public class preventOverlap : MonoBehaviour
+{
+/*
     RectTransform corner;
     Image panel;
     GameObject cursor;
@@ -22,4 +23,5 @@ public class preventOverlap : MonoBehaviour {
     {
         
 	}
+*/
 }

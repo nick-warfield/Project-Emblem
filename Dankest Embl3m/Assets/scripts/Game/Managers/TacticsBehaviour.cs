@@ -228,7 +228,7 @@ public class TacticsBehaviour : MonoBehaviour
 
         //Then we add the parent of the last tile added until we have added the starting tile
         do
-        { NewPath.Add(NewPath.Last().parent); }
+        { NewPath.Add(NewPath.Last().Parent); }
         while
         (NewPath.Last() != StartLocation);
 
