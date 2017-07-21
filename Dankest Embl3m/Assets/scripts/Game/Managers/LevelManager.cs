@@ -66,25 +66,26 @@ public class LevelManager : Map
             {
                 for (int k = -j; k < j; k++)
                 {
-                    Coordinates1 = new Vector2(MoveList[i].x - k, MoveList[i].y + Mathf.Abs(k) - j); //print(Coordinates1);
-                    Coordinates2 = new Vector2(MoveList[i].x + k, MoveList[i].y - Mathf.Abs(k) + j); //print(Coordinates2);
+                    Coordinates1 = new Vector2(MoveList[i].x - k, MoveList[i].y + Mathf.Abs(k) - j);
+                    Coordinates2 = new Vector2(MoveList[i].x + k, MoveList[i].y - Mathf.Abs(k) + j);
+
+                    if (BoundsCheck(Coordinates1, Map))
+                    {
+                        Terrain Tile = Map[Mathf.RoundToInt(Coordinates1.x), Mathf.RoundToInt(Coordinates1.y)];
+
+                        if (!PathContains(Tile, inRange.ToArray()))
+                        { inRange.Add(Tile); }
+                    }
+
+                    if (BoundsCheck(Coordinates2, Map))
+                    {
+                        Terrain Tile = Map[Mathf.RoundToInt(Coordinates2.x), Mathf.RoundToInt(Coordinates2.y)];
+
+                        if (!PathContains(Tile, inRange.ToArray()))
+                        { inRange.Add(Tile); }
+                    }
+
                 }
-            }
-
-            if (BoundsCheck(Coordinates1, Map) )
-            {
-                Terrain Tile = Map[Mathf.RoundToInt(Coordinates1.x), Mathf.RoundToInt(Coordinates1.y)];
-
-                if (!PathContains(Tile, inRange.ToArray()) )
-                { inRange.Add(Tile); }
-            }
-
-            if (BoundsCheck(Coordinates2, Map))
-            {
-                Terrain Tile = Map[Mathf.RoundToInt(Coordinates2.x), Mathf.RoundToInt(Coordinates2.y)];
-
-                if (!PathContains(Tile, inRange.ToArray()))
-                { inRange.Add(Tile); }
             }
         }
 
