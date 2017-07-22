@@ -1,12 +1,108 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using UnityEngine.UI;
 
 public class CombatManager : TacticsBehaviour
 {
-    //CombatStats Attacker, Defender;
-    //Terrain AttackerTerrain, DefenderTerrain;
+    public AnimationParameters LeftSide, RightSide;
+    //public UnityEngine.UI.Text LeftText, RightText;
 
+    AttackResults[] TheStack;
+    public bool SimulateCombat = false;
+    float TimeStamp = 0;
+    public Camera mainCam, combatCam;
+
+    DamageRelated AttackerDamageParameters, DefenderDamageParameters;
+
+
+    //Sets up all the variables/structs needed locally, but can be triggered from another class
+    public void InitializeCombatParameters (RPGClass Attacker, RPGClass Defender, Terrain AttackerTerrain, Terrain DefenderTerrain)
+    {
+        //Set up my probabilities and damage including resistances
+        AttackerDamageParameters = ProbableDamage(Attacker.CombatParameters, Defender.CombatParameters, AttackerTerrain, DefenderTerrain);
+        DefenderDamageParameters = ProbableDamage(Defender.CombatParameters, Attacker.CombatParameters, DefenderTerrain, AttackerTerrain);
+
+        //Set up the 'sides', that way world space can be somewhat reflected in the animations and attacker/defender only get to be on one specific side
+        if (Attacker.x > Defender.x || Attacker.y > Defender.y)
+        { RightSide.Unit = Attacker; LeftSide.Unit = Defender; }
+        else
+        { RightSide.Unit = Defender; LeftSide.Unit = Attacker; }
+    }
+
+    public void StartCombat()
+    {
+        //Initialize Stack
+        TheStack = GetCombatResults(AttackerDamageParameters, DefenderDamageParameters);
+
+        //Assign Sprites to each side
+        LeftSide.AnimationObject.GetComponent<SpriteRenderer>().sprite = LeftSide.Unit.GetComponent<SpriteRenderer>().sprite;
+        RightSide.AnimationObject.GetComponent<SpriteRenderer>().sprite = RightSide.Unit.GetComponent<SpriteRenderer>().sprite;
+
+        //Swap Cameras
+        combatCam.enabled = true;
+        mainCam.enabled = false;
+
+        //Set Flag to start animating
+        TimeStamp = Time.time + 1f;
+        SimulateCombat = true;
+    }
+    void EndCombat()
+    {
+        //Swap Cameras
+        mainCam.enabled = true;
+        combatCam.enabled = false;
+
+        //Set flag to stop animating
+        TimeStamp = 0;
+        SimulateCombat = false;
+    }
+
+    private void Update()
+    {
+        if (SimulateCombat && Time.time >= TimeStamp)
+        {
+            if (TheStack.Length > 0)
+            {
+                TheStack = StartAnimations(TheStack, LeftSide, RightSide);
+                TimeStamp = Time.time + 1f;
+            }
+            else
+            { EndCombat(); }
+        }
+    }
+
+
+    [System.Serializable]
+    public struct AnimationParameters
+    {
+        public RPGClass Unit;
+        public GameObject AnimationObject;
+        public UnityEngine.UI.Text TextUI;
+
+        public GameObject TerrainFloor;
+        public GameObject TerrainBackground;
+    }
+
+    //Runs an attack and then returns the combat left so that it can be fed back in with correct timings
+    AttackResults[] StartAnimations (AttackResults[] Attacks, AnimationParameters Left, AnimationParameters Right)
+    {
+        print(Attacks.Length);
+
+        if (Attacks[0].Unit == Left.Unit)
+        { Left.AnimationObject.GetComponent<Animator>().SetTrigger("Start"); }
+        else
+        { Right.AnimationObject.GetComponent<Animator>().SetTrigger("Start"); }
+
+        List<AttackResults> Reduced = new List<AttackResults> { };
+        for (int i = 1; i < Attacks.Length; i++)
+        { Reduced.Add(Attacks[i]); }
+
+        return Reduced.ToArray();
+    }
+
+
+    //This stuff is all good vvvvvvv
 
     //struct to store the results of an attack
     struct AttackResults
@@ -48,6 +144,9 @@ public class CombatManager : TacticsBehaviour
             AttackList.Add(AttackRoll(Attacker));
             Attacker.AttackCount--;
             Defender.HP -= AttackList[AttackList.Count - 1].DamageDealt;
+
+            print("Attacker Attacked. Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
+
             if (Defender.HP <= 0) { return AttackList.ToArray(); }
         }
 
@@ -57,6 +156,9 @@ public class CombatManager : TacticsBehaviour
             AttackList.Add(AttackRoll(Defender));
             Defender.AttackCount--;
             Attacker.HP -= AttackList[AttackList.Count - 1].DamageDealt;
+
+            print("Defender Attacked. Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
+
             if (Attacker.HP <= 0) { return AttackList.ToArray(); }
         }
 
@@ -66,12 +168,16 @@ public class CombatManager : TacticsBehaviour
             AttackList.Add(AttackRoll(Attacker));
             Attacker.AttackCount--;
             Defender.HP -= AttackList[AttackList.Count - 1].DamageDealt;
+
+            print("Attacker Attacked. Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
         }
         else if (Defender.AttackCount > 0)
         {
             AttackList.Add(AttackRoll(Defender));
             Defender.AttackCount--;
             Attacker.HP -= AttackList[AttackList.Count - 1].DamageDealt;
+
+            print("Defender Attacked. Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
         }
 
         return AttackList.ToArray();

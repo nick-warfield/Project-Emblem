@@ -10,9 +10,11 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    //Enums for managing the State of the Unit
-    public enum _State { Idle, Selected, Walking, Waiting, InCombat, Downed, Dead, Rescued, Traumatized };
+    //Enums for managing the State and Status of the Unit
+    public enum _State { Idle, Selected, Walking, Waiting, InCombat, SelectingAction, Rescued };
     public _State CurrentState = _State.Idle;
+    public enum StatusEffects { None, Tramatized, Downed, Dead };
+    public StatusEffects Condition;
 
     //The Character's X and Y coordinates, hidden in inspector. Plus a little function to update them using position
     [HideInInspector] public int x, y;

@@ -23,6 +23,9 @@ public class LevelManager : Map
         //Check if the new tile is a tile that could be traveled to
         if (!PathContains(NewTile, AvailableTiles) )
         { return CurrentPath; }
+        //Check if tile is the last tile on the path
+        else if (NewTile == CurrentPath[CurrentPath.Length - 1])
+        { return CurrentPath; }
         //Check if the new tile is already on the current path
         else if (PathContains(NewTile, CurrentPath) )
         { return ShortenPath(NewTile, CurrentPath); }
@@ -51,7 +54,12 @@ public class LevelManager : Map
         }
         //If all other checks fail, return the shortest path
         else
-        { return ShortenPath(NewTile, CurrentPath[0]); }
+        {
+            Terrain[] temp = ShortenPath(NewTile, CurrentPath[0]);
+
+            if (temp == null) { return CurrentPath; }
+            else { return temp; }
+        }
     }
     //Adds the Range of the weapon to the movelist
     Terrain[] ExapandMoveListWithWeaponRange(Weapons Weapon, Terrain[] MoveList, Terrain[,] Map)
@@ -150,45 +158,85 @@ public class LevelManager : Map
 
         //If a unit is selected, these actions are available
         else
+        { StateMachine(SelectedUnit); }
+	}
+
+
+    //A little state machine to handle different actions depending on what is being done with the selected unit
+    private void StateMachine(RPGClass Unit)
+    {
+        switch (Unit.CurrentState)
         {
-            //On deselect action, put unit back at the start of the path and then deselect it
-            if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
-            {
-                SelectedUnit.x = Path[0].x; SelectedUnit.y = Path[0].y;
-                DeselectUnit(Character._State.Idle);
-            }
-
-            //If a deselect action is not requested
-            else
-            {
-                //Update the path only while the character has not been moved
-                if (SelectedUnit.CurrentState == Character._State.Selected)
-                { Path = UpdateCurrentPath(LevelMap[Cursor.x, Cursor.y], SelectedUnit, Path, AvailableTilesForTravel); }
-
+            case Character._State.Selected:
                 //Put up some indicators for movement, current pathm and attackable tiles
+                Path = UpdateCurrentPath(LevelMap[Cursor.x, Cursor.y], Unit, Path, AvailableTilesForTravel);
+
                 DisplayIndicator(Indicators[1], AvailableTilesForTravel);
                 DisplayIndicator(Indicators[0], Path);
                 DisplayIndicator(Indicators[2], RedTiles);
 
-                //If a select input is requested do one of the following
+                //If the player wants to confirm movement, move the unit to the last tile on the path
                 if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
                 {
-                    //If the unit is in the selected state, set it to the walking state and update it's location
-                    if (SelectedUnit.CurrentState == Character._State.Selected)
-                    {
-                        SelectedUnit.CurrentState = Character._State.Walking;
+                    Unit.CurrentState = Character._State.SelectingAction;
 
-                        SelectedUnit.x = Path[Path.Length - 1].x;
-                        SelectedUnit.y = Path[Path.Length - 1].y;
-                    }
+                    Unit.x = Path[Path.Length - 1].x; Unit.y = Path[Path.Length - 1].y;
+                }
 
-                    //If a unit is in the walking state, deselect it and put it in the waiting state since it can no longer be moved this turn
-                    else if (SelectedUnit.CurrentState == Character._State.Walking)
+                //If the player wants to cancel the selection, deselect the unit
+                else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
+                { DeselectUnit(Character._State.Idle); }
+
+                break;
+
+            case Character._State.SelectingAction:
+                //Put up some indicators for what is in range
+                Weapons wep = (Weapons)Unit.Inventory[0];
+                DisplayIndicator(Indicators[2], DijkstraAlgorithm(Path[Path.Length - 1], wep.minRange, wep.maxRange, LevelMap));
+
+                
+                //If the player wants to confirm an action
+                if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
+                {
+                    RPGClass TempUnit = Cursor.GetUnitAtCursorPosition();
+
+                    if (TempUnit != null)
                     {
-                        DeselectUnit(Character._State.Waiting);
+                        //If the player clicks the selected unit they will begin waiting
+                        if (TempUnit == Unit) { DeselectUnit(Character._State.Waiting); }
+
+                        //If the player clicks an enemy unit, combat will begin
+                        else if (!TempUnit.CompareTag(SelectedUnit.tag))
+                        {
+                            SelectedUnit.CurrentState = Character._State.InCombat;
+
+                            //Create and Set up a combat Manager
+                            CombatManager cManager = gameObject.GetComponent<CombatManager>();
+                            cManager.InitializeCombatParameters(Unit, TempUnit, LevelMap[Unit.x, Unit.y], LevelMap[TempUnit.x, TempUnit.y]);
+                            cManager.StartCombat();
+                        }
                     }
                 }
-            }
+                
+
+                //If the player wants to cancel their move and put the unit back at the starting tile
+                else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
+                {
+                    Unit.x = Path[0].x; Unit.y = Path[0].y;
+                    SetSelectedUnit(Unit, LevelMap);    //If I don't recalculate all of the pathfinding, the game crashes
+                }
+
+                break;
+
+            case Character._State.InCombat:
+                if (!GetComponent<CombatManager>().SimulateCombat) { Unit.CurrentState = Character._State.Waiting; }
+                break;
+
+            default:
+                //If the selected unit gets put in an unintended state, deselect them and make them wait
+                print("Defaulted. Previous State: " + Unit.CurrentState.ToString());
+                DeselectUnit(Character._State.Waiting);
+                break;
         }
-	}
+    }
 }

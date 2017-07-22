@@ -53,7 +53,7 @@ public class Map : TacticsBehaviour
                 }
 
                 didYIncrementTwiceInARow = true;        //turn on my exit condition
-                print("tiles loaded into array");       //message to confirm tiles were loaded
+                print("tiles loaded into array by: " + gameObject.name);       //message to confirm tiles were loaded
             }
         }
         while (!didYIncrementTwiceInARow);
