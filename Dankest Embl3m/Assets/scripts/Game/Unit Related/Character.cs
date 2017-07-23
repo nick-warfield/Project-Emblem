@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(Animator2D))]
 
 public class Character : MonoBehaviour
 {
@@ -48,6 +49,7 @@ public class Character : MonoBehaviour
         public SpriteRenderer Renderer;
     }
     public CharacterArt SpriteSheets;
+
 
     //This is where I will add on support functions and stats and stuff. Just need a place holder for now since those are some pretty advanced features.
     public string support = "Support Struct Goes Here";
