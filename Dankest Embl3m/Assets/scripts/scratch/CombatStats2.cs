@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CombatStats : MonoBehaviour
+public class CombatStats2 : MonoBehaviour
 {
     public int Health = 0;
     public int Stress = 0;
@@ -22,19 +22,16 @@ public class CombatStats : MonoBehaviour
     public int Defense;
     public int Resistance;
 
-    private void Reset()
-    {
-        SetCombatStats();
-    }
+
 
     //Sets the values of this class for reference later on
-    public void SetCombatStats ()
+    public void SetCombatStats (RPGClass Unit)
     {
-        RPGClass Unit = GetComponent<RPGClass>();
+        //RPGClass Unit = GetComponent<RPGClass>();
 
         EquipedWeapon = EquipWeapon(Unit.Inventory, Unit.WeaponStats);
         Health = Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue;
-        Stress= Unit.Stats[(int)RPGClass.Stat.StressPoints].dynamicValue;
+        Stress = Unit.Stats[(int)RPGClass.Stat.StressPoints].dynamicValue;
 
         int[] temp = CalculateCombatStats(Unit.Stats, Unit.WeaponStats, EquipedWeapon);
         Attack = temp[0];
@@ -56,7 +53,7 @@ public class CombatStats : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             //check if slot contains a weapon
-            if (Inventory[i].ItemCategory == Items.ItemType.Weapon)
+            if (Inventory[i] != null && Inventory[i].ItemCategory == Items.ItemType.Weapon)
             {
                 print("weapon found at index " + i);
                 Weapons temp = Inventory[i].GetComponent<Weapons>();
@@ -97,7 +94,7 @@ public class CombatStats : MonoBehaviour
         //Do calculations to determine the final stats
         //Determine attack Speed
         attackSpeed = Speed;
-        if (Bulk >= Weapon.Weight) { attackSpeed += (Bulk - Weapon.Weight); }
+        if (Bulk < Weapon.Weight) { attackSpeed += (Bulk - Weapon.Weight); }
 
         //Determine Weapon Bonuses
         int[] bonuses = GetWeaponBonuses(Weapon.WeaponCategory, WeaponSkill);

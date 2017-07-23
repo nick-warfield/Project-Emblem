@@ -25,9 +25,15 @@ public class CombatManager : TacticsBehaviour
 
         //Set up the 'sides', that way world space can be somewhat reflected in the animations and attacker/defender only get to be on one specific side
         if (Attacker.x > Defender.x || Attacker.y > Defender.y)
-        { RightSide.Unit = Attacker; LeftSide.Unit = Defender; }
+        {
+            RightSide.Unit = Attacker; RightSide.Probabilites = AttackerDamageParameters;
+            LeftSide.Unit = Defender; LeftSide.Probabilites = DefenderDamageParameters;
+        }
         else
-        { RightSide.Unit = Defender; LeftSide.Unit = Attacker; }
+        {
+            RightSide.Unit = Defender; RightSide.Probabilites = DefenderDamageParameters;
+            LeftSide.Unit = Attacker; LeftSide.Probabilites = AttackerDamageParameters;
+        }
     }
 
     public void StartCombat()
@@ -44,7 +50,7 @@ public class CombatManager : TacticsBehaviour
         mainCam.enabled = false;
 
         //Set Flag to start animating
-        TimeStamp = Time.time + 1f;
+        TimeStamp = Time.time + 1.75f;
         SimulateCombat = true;
     }
     void EndCombat()
@@ -60,15 +66,24 @@ public class CombatManager : TacticsBehaviour
 
     private void Update()
     {
-        if (SimulateCombat && Time.time >= TimeStamp)
+        if (SimulateCombat)
         {
-            if (TheStack.Length > 0)
+            if (Time.time >= TimeStamp)
             {
-                TheStack = StartAnimations(TheStack, LeftSide, RightSide);
-                TimeStamp = Time.time + 1f;
+                if (TheStack.Length > 0)
+                {
+                    TheStack = StartAnimations(TheStack, LeftSide, RightSide);
+                    TimeStamp = Time.time + 1.25f;
+                }
+                else
+                { EndCombat(); }
             }
-            else
-            { EndCombat(); }
+
+            LeftSide.HPUI.text = "HP: " + LeftSide.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue + "/" + LeftSide.Unit.Stats[(int)RPGClass.Stat.HitPoints].staticValue;
+            LeftSide.StatsUI.text = "Hit: " + LeftSide.Probabilites.HitChance + "\nCrit: " + LeftSide.Probabilites.CritChance + "\nDamage: " + LeftSide.Probabilites.Damage;
+
+            RightSide.HPUI.text = "HP: " + RightSide.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue + "/" + RightSide.Unit.Stats[(int)RPGClass.Stat.HitPoints].staticValue;
+            RightSide.StatsUI.text = "Hit: " + RightSide.Probabilites.HitChance + "\nCrit: " + RightSide.Probabilites.CritChance + "\nDamage: " + RightSide.Probabilites.Damage;
         }
     }
 
@@ -78,10 +93,13 @@ public class CombatManager : TacticsBehaviour
     {
         public RPGClass Unit;
         public GameObject AnimationObject;
-        public UnityEngine.UI.Text TextUI;
+
+        public UnityEngine.UI.Text HPUI, StatsUI, NameUI;
 
         public GameObject TerrainFloor;
         public GameObject TerrainBackground;
+
+        public DamageRelated Probabilites;
     }
 
     //Runs an attack and then returns the combat left so that it can be fed back in with correct timings
@@ -90,9 +108,17 @@ public class CombatManager : TacticsBehaviour
         print(Attacks.Length);
 
         if (Attacks[0].Unit == Left.Unit)
-        { Left.AnimationObject.GetComponent<Animator>().SetTrigger("Start"); }
+        {
+            Left.AnimationObject.GetComponent<Animator>().SetTrigger("Start");
+            Right.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue -= Attacks[0].DamageDealt;
+            Right.Unit.ClampHP();
+        }
         else
-        { Right.AnimationObject.GetComponent<Animator>().SetTrigger("Start"); }
+        {
+            Right.AnimationObject.GetComponent<Animator>().SetTrigger("Start");
+            Left.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue -= Attacks[0].DamageDealt;
+            Left.Unit.ClampHP();
+        }
 
         List<AttackResults> Reduced = new List<AttackResults> { };
         for (int i = 1; i < Attacks.Length; i++)
@@ -100,9 +126,6 @@ public class CombatManager : TacticsBehaviour
 
         return Reduced.ToArray();
     }
-
-
-    //This stuff is all good vvvvvvv
 
     //struct to store the results of an attack
     struct AttackResults
@@ -183,9 +206,8 @@ public class CombatManager : TacticsBehaviour
         return AttackList.ToArray();
     }
 
-
     //Contains the stats relevant to dealing damage
-    struct DamageRelated
+    public struct DamageRelated
     {
         public RPGClass UnitReference;
 
@@ -221,7 +243,7 @@ public class CombatManager : TacticsBehaviour
         }
     };
     //figure out attacker parameters relative to the defender.
-    DamageRelated ProbableDamage(CombatStats Attacker, CombatStats Defender, Terrain AttackerTerrain, Terrain DefenderTerrain)
+    DamageRelated ProbableDamage(RPGClass.CombatStats Attacker, RPGClass.CombatStats Defender, Terrain AttackerTerrain, Terrain DefenderTerrain)
     {
         //Don't attack with a staff, it's for healing not hurting! (This only basic staves)
         if (Attacker.EquipedWeapon.WeaponCategory == Weapons.WeaponType.Staff && Attacker.EquipedWeapon.Effect == Weapons.WeaponEffect.Basic)
@@ -258,17 +280,17 @@ public class CombatManager : TacticsBehaviour
         if (Crit < 0) { Crit = 0; } else if (Crit > 100) { Crit = 100; }
         if (Hit < 0) { Hit = 0; } else if (Hit > 100) { Hit = 100; }
 
-        return new DamageRelated(Attacker.GetComponent<RPGClass>(), Attacker.Health, Damage, Hit, Crit, AttackCount, Modifiers[2]);
+        return new DamageRelated(Attacker.UnitReference, Attacker.Health, Damage, Hit, Crit, AttackCount, Modifiers[2]);
     }
     //Heals are bit different but similar enough, most notable is that you can't heal enemies and you can never heal more than once at a time
-    DamageRelated Heal(CombatStats Healer, CombatStats Other)
+    DamageRelated Heal(RPGClass.CombatStats Healer, RPGClass.CombatStats Other)
     {
         int Hit = 100, Crit = 0, HealAmount = Healer.Attack, HealCount;
 
-        if (Other.tag != Healer.tag) { HealCount = 0; }
+        if (Other.UnitReference.tag != Healer.UnitReference.tag) { HealCount = 0; }
         else { HealCount = 1; }
 
-        return new DamageRelated(Healer.GetComponent<RPGClass>(), Healer.Health, HealAmount, Hit, Crit, HealCount);
+        return new DamageRelated(Healer.UnitReference, Healer.Health, HealAmount, Hit, Crit, HealCount);
     }
 
     //Calculate the weapon triangle effects

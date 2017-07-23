@@ -96,6 +96,103 @@ public class RPGClass : Character
 
 
     //Give the unit something to pass along to the combat manager
+    [System.Serializable]
+    public struct CombatStats
+    {
+        public RPGClass UnitReference;
+        public Weapons EquipedWeapon;
+        public Weapons.Damage DamageType;
+
+        public int Health, Stress, Attack, HitChance, CritChance, Dodge, CriticalDodge, AttackSpeed, Defense, Resistance;
+
+        public CombatStats(RPGClass Unit, Weapons Weapon)
+        {
+            //Set up stuff from parameters
+            UnitReference = Unit;
+            EquipedWeapon = Weapon;
+
+            //Rip stats from unit
+            Health = Unit.Stats[(int)Stat.HitPoints].dynamicValue;
+            Stress = Unit.Stats[(int)Stat.StressPoints].dynamicValue;
+            Defense = Unit.Stats[(int)Stat.Defense].dynamicValue;
+            Resistance = Unit.Stats[(int)Stat.Resistance].dynamicValue;
+            CriticalDodge = Unit.Stats[(int)Stat.Luck].dynamicValue;
+
+            if (EquipedWeapon == null)
+            {
+                DamageType = Weapons.Damage.Physical;
+                HitChance = CritChance = Attack = 0;
+                AttackSpeed = Unit.Stats[(int)Stat.Speed].dynamicValue;
+                Dodge = (AttackSpeed * 2) + Unit.Stats[(int)Stat.Luck].dynamicValue;
+            }
+            else
+            {
+                DamageType = Weapon.DamageType;
+
+                //Calculate Hit and Crit Chance
+                HitChance = (Unit.Stats[(int)Stat.Skill].dynamicValue * 2) + (Unit.Stats[(int)Stat.Luck].dynamicValue / 2) + Weapon.HitChance;
+                CritChance = (Unit.Stats[(int)Stat.Skill].dynamicValue * 2) + (Unit.Stats[(int)Stat.Luck].dynamicValue / 4);
+
+                //Calculate Damage, Physical attacks use strength while magical attacks use magic
+                if (DamageType == Weapons.Damage.Physical)
+                { Attack = Unit.Stats[(int)Stat.Strength].dynamicValue + Weapon.Might; }
+                else if (DamageType == Weapons.Damage.Magical)
+                { Attack = Unit.Stats[(int)Stat.Magic].dynamicValue + Weapon.Might; }
+                else
+                { Attack = 0; }
+
+                //If a weapon is too heavy, give a penalty to speed. Otherwise, just use speed
+                if (Unit.Stats[(int)Stat.Bulk].dynamicValue < Weapon.Weight)
+                { AttackSpeed = Unit.Stats[(int)Stat.Speed].dynamicValue + (Unit.Stats[(int)Stat.Bulk].dynamicValue - Weapon.Weight); }
+                else
+                { AttackSpeed = Unit.Stats[(int)Stat.Speed].dynamicValue; }
+
+                //Determine Dodge based off of the (potentially) modified speed stat
+                Dodge = (AttackSpeed * 2) + Unit.Stats[(int)Stat.Luck].dynamicValue;
+
+                //Determine Weapon Bonuses, Reward some combination of extra damage or hit damage
+                //Check Weapon type first as different bonuses are rewarded to different weapons. Then Check weapon rank, higher rank = better bonus
+                Weapons.Rank CharacterWeaponRank = Unit.WeaponStats[(int)Weapon.WeaponCategory].WeaponRank;
+                switch (Weapon.WeaponCategory)
+                {
+                    case (Weapons.WeaponType.Sword):
+                    case (Weapons.WeaponType.Staff):
+                        switch (CharacterWeaponRank)
+                        {
+                            case (Weapons.Rank.C): Attack += 1; break;
+                            case (Weapons.Rank.B): Attack += 2; break;
+                            case (Weapons.Rank.A):
+                            case (Weapons.Rank.S): Attack += 3; break;
+                        }
+                        break;
+
+                    case (Weapons.WeaponType.Lance):
+                    case (Weapons.WeaponType.Bow):
+                    case (Weapons.WeaponType.Arcane):
+                    case (Weapons.WeaponType.Divine):
+                    case (Weapons.WeaponType.Occult):
+                        switch (CharacterWeaponRank)
+                        {
+                            case (Weapons.Rank.C): Attack += 1; break;
+                            case (Weapons.Rank.B): Attack += 1; HitChance += 5; break;
+                            case (Weapons.Rank.A):
+                            case (Weapons.Rank.S): Attack += 2; HitChance += 5; break;
+                        }
+                        break;
+
+                    case (Weapons.WeaponType.Axe):
+                        switch (CharacterWeaponRank)
+                        {
+                            case (Weapons.Rank.C): HitChance += 5; break;
+                            case (Weapons.Rank.B): HitChance += 10; break;
+                            case (Weapons.Rank.A):
+                            case (Weapons.Rank.S): HitChance += 15; break;
+                        }
+                        break;
+                }
+            }
+        }
+    };
     public CombatStats CombatParameters;
 
     //when character gains 100 exp, increase level and randomly assign stat upgrades
@@ -136,7 +233,29 @@ public class RPGClass : Character
         }
     }
 
+    //Equip the first elligible weapon
+    protected Weapons EquipWeapon(Items[] Inventory, ClassWeapons[] WeaponProficencies)
+    {
+        //loop through inventory
+        for (int i = 0; i < 5; i++)
+        {
+            //check if slot contains a weapon
+            if (Inventory[i] != null && Inventory[i].ItemCategory == Items.ItemType.Weapon)
+            {
+                print("weapon found at index " + i);
+                Weapons temp = Inventory[i].GetComponent<Weapons>();
 
+                //Check to see if the Unit is trained enough to weild the weapon
+                for (int j = 0; j < 8; j++)
+                {
+                    if (WeaponProficencies[j].WeaponCategory == temp.WeaponCategory && WeaponProficencies[j].WeaponRank >= temp.WeaponRank)
+                    { print(temp + "Equiped"); i = 10; return temp; }
+                }
+            }
+        }
+
+        return null;
+    }
 
     //I'll change this when I want to adjust my pathfinding
     //checks a tile and adjusts the cost of traveling it so that units can have unique movement rules (eg: flying units can travel anything for 1 cost)
@@ -145,33 +264,17 @@ public class RPGClass : Character
         return Tile.MovementCost;
     }
 
-
-    /*
-    //check to see if unit can move. I'll use a state machine to handle behaviour, and an animator to handle color shifting
-    public void MoveState (bool hasMoved)
-    {
-        if (GameObject.Find("Director").GetComponent<GridMap>().currentTurn != gameObject.tag)
-        {
-            classSprites.render.color = classSprites.ogColor;
-        }
-        else if (hasMoved)
-        {
-            classSprites.render.color = Color.gray;
-        }
-
-    }
-    */
-
     //keep hp beetween 0 and max value
-    public void ClampHP (int CurrentHP, int MaxHP)
+    public void ClampHP ()
     {
-        if (CurrentHP < 0) { CurrentHP = 0; }
-        else if (CurrentHP > MaxHP) { CurrentHP = MaxHP; }
+        if (Stats[(int)Stat.HitPoints].dynamicValue < 0)
+        { Stats[(int)Stat.HitPoints].dynamicValue = 0; }
+
+        else if (Stats[(int)Stat.HitPoints].dynamicValue > Stats[(int)Stat.HitPoints].staticValue)
+        { Stats[(int)Stat.HitPoints].dynamicValue = Stats[(int)Stat.HitPoints].staticValue; }
     }
 
 
-    private void Reset()
-    {
-        CombatParameters = GetComponent<CombatStats>();
-    }
+    private void Start()
+    { CombatParameters = new CombatStats(this, EquipWeapon(Inventory, WeaponStats) ); }
 }
