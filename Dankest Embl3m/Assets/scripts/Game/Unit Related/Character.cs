@@ -104,7 +104,7 @@ public class Character : MonoBehaviour
     }
 
     //checks to see if a unit gains an injury, then assigns it to them if they did
-    public void GainInjury()
+    protected void GainInjury()
     {
         //A table to roll on to see what kind of disability this unit will suffer, at high values this unit's death becomes certain. See Star Wars tabletop RPG for inspiration.
         //Could possibly avoid injury at a low value. Could also gain permanent disabilites, such as losing an eye or limb.

@@ -95,9 +95,12 @@
     <Compile Include="Assets\scripts\Game\Managers\TacticsBehaviour.cs" />
     <Compile Include="Assets\scripts\Game\Managers\TurnManager.cs" />
     <Compile Include="Assets\scripts\Game\Unit Related\Character.cs" />
+    <Compile Include="Assets\scripts\Game\Unit Related\FlyingUnit.cs" />
+    <Compile Include="Assets\scripts\Game\Unit Related\MountedUnit.cs" />
     <Compile Include="Assets\scripts\Game\Unit Related\RPGClass.cs" />
     <Compile Include="Assets\scripts\Game\Utility\DestroyOnBoolNotReset.cs" />
     <Compile Include="Assets\scripts\Game\Utility\Director.cs" />
+    <Compile Include="Assets\scripts\Game\Utility\EnumFlagsAttribute.cs" />
     <Compile Include="Assets\scripts\Game\Utility\preventOverlap.cs" />
     <Compile Include="Assets\scripts\scratch\ArrayLayout.cs" />
     <Compile Include="Assets\scripts\scratch\CombatStats2.cs" />

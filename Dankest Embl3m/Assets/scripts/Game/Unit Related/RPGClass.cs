@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(CombatStats))]
-
 public class RPGClass : Character
 {
+    //Enum for differentiating between different unit types, that way specail interactions can be made
+    [System.Flags] public enum UnitType { Armour, Horse, Flying, Monster };
+
     //Enum for accessing the correct stat from the Stats Structure
     public enum Stat { HitPoints, StressPoints, Strength, Magic, Speed, Skill, Defense, Resistance, Constitution, Willpower, Luck, Move, Bulk, Aid };
 
     //basic class stuff needed (The name of the class, the starting level, the starting amount of exp, the amount of exp dropped on death
     public string className;
+    [SerializeField] [EnumFlags] public UnitType Type;
     public int level = 1, exp;          //On mission start, enemy units are leveled up from 1 to their intended level so that their are slight variations in their stats
 
     //the structure to hold all of the data a stat needs
@@ -207,9 +209,8 @@ public class RPGClass : Character
             //check to see if max level has been reached, roll if it hasn't been
             if (Stats[i].staticValue < Stats[i].maxValue)
             {
-                float numRolled = Random.value * 100;                                       //the number rolled, each stat gets its own roll
-                float charGrowth = 0f; // GetComponent<Character>().growthRates[i].growthRate;     //the growth rate attached to the character, usually 0 for fodder enemies
-                float GrowthNum = Stats[i].growthRate + charGrowth;                         //class growth + character growth. The number to roll under in order to increase the stat. So the higher this number is, the more likely it is to go up.
+                float numRolled = Random.value * 100;       //the number rolled, each stat gets its own roll
+                float GrowthNum = Stats[i].growthRate;      //class growth + character growth. The number to roll under in order to increase the stat. So the higher this number is, the more likely it is to go up.
 
                 int statIncrease = 0;       //keep track of how much a stat has been rasied by
 
@@ -231,6 +232,9 @@ public class RPGClass : Character
                 Stats[i].dynamicValue += statIncrease;
             }
         }
+
+        //Update combat parameters on level
+        CombatParameters = new CombatStats(this, EquipWeapon(Inventory, WeaponStats));
     }
 
     //Equip the first elligible weapon
@@ -274,7 +278,13 @@ public class RPGClass : Character
         { Stats[(int)Stat.HitPoints].dynamicValue = Stats[(int)Stat.HitPoints].staticValue; }
     }
 
-
+    //Basic Setup for Stats and stuff
     private void Start()
-    { CombatParameters = new CombatStats(this, EquipWeapon(Inventory, WeaponStats) ); }
+    {
+        //auto level a unit to create slight stat variations
+        while (exp >= 100) { LevelUp(); }
+
+        //Initialize Combat Parameters
+        CombatParameters = new CombatStats(this, EquipWeapon(Inventory, WeaponStats) );
+    }
 }
