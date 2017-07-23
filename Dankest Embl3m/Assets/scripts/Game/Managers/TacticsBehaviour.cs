@@ -175,7 +175,7 @@ public class TacticsBehaviour : MonoBehaviour
         //Grab Starting Coordinates
         int x = StartTile.x, y = StartTile.y;
 
-        List<Terrain> visited = new List<Terrain> { Map[x, y] };    //this list contains the tiles that form the shortest path
+        List<Terrain> visited = new List<Terrain> { };    //this list contains the tiles that form the shortest path
         List<Terrain> unvisited = new List<Terrain> { };        //this list contains the tiles being considered to add to the closed list
 
         Terrain mostRecent = Map[x, y];

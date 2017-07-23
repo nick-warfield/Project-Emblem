@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //use requirecomponent to auto assign all the components needed to build a character
-//[RequireComponent(typeof(RPGClass))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(SpriteRenderer))]
@@ -128,8 +127,7 @@ public class Character : MonoBehaviour
         charRB.constraints = RigidbodyConstraints.FreezePositionZ;
         charRB.freezeRotation = true;
 
-        charBOX.center = new Vector3(0.5f, -0.5f, 0);
-        charBOX.size = new Vector3(0.5f, 0.5f, 2);
+        charBOX.size = new Vector3(0.5f, 0.5f, 0.5f);
     }
 
     private void Awake()

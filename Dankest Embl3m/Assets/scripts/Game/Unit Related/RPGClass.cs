@@ -234,7 +234,7 @@ public class RPGClass : Character
         }
 
         //Update combat parameters on level
-        CombatParameters = new CombatStats(this, EquipWeapon(Inventory, WeaponStats));
+        //CombatParameters = new CombatStats(this, EquipWeapon(Inventory, WeaponStats));
     }
 
     //Equip the first elligible weapon

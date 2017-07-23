@@ -19,7 +19,7 @@ public class Map : TacticsBehaviour
         do
         {
             //Checks to see if a tile exsists at a specific location
-            Collider[] Reader = Physics.OverlapSphere(new Vector3(x+0.5f, y+0.5f, 0), 0.25f);
+            Collider[] Reader = Physics.OverlapSphere(new Vector3(x, y, 0), 0.25f);
 
             if (Reader.Length == 1)     //if only 1 tile has been detected, add it to the list. Then increment x.
             {

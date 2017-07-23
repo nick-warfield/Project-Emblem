@@ -99,6 +99,41 @@ public class LevelManager : Map
 
         return inRange.ToArray();
     }
+    Terrain[] GetRangeAtPoint(Weapons Weapon, Terrain Point, Terrain[,] Map)
+    {
+        List<Terrain> inRange = new List<Terrain> { };
+        Vector2 Coordinates1 = Vector2.zero;
+        Vector2 Coordinates2 = Vector2.zero;
+
+        for (int j = Weapon.minRange; j <= Weapon.maxRange; j++)
+        {
+            for (int k = -j; k < j; k++)
+            {
+                Coordinates1 = new Vector2(Point.x - k, Point.y + Mathf.Abs(k) - j);
+                Coordinates2 = new Vector2(Point.x + k, Point.y - Mathf.Abs(k) + j);
+
+                if (BoundsCheck(Coordinates1, Map))
+                {
+                    Terrain Tile = Map[Mathf.RoundToInt(Coordinates1.x), Mathf.RoundToInt(Coordinates1.y)];
+
+                    if (!PathContains(Tile, inRange.ToArray()))
+                    { inRange.Add(Tile); }
+                }
+
+                if (BoundsCheck(Coordinates2, Map))
+                {
+                    Terrain Tile = Map[Mathf.RoundToInt(Coordinates2.x), Mathf.RoundToInt(Coordinates2.y)];
+
+                    if (!PathContains(Tile, inRange.ToArray()))
+                    { inRange.Add(Tile); }
+                }
+
+            }
+
+        }
+
+        return inRange.ToArray();
+    }
 
     //Spawns ui tiles to show where i can travel to
     private void DisplayIndicator(GameObject Indicator, Terrain[] Tiles)
@@ -181,6 +216,7 @@ public class LevelManager : Map
                     Unit.CurrentState = Character._State.SelectingAction;
 
                     Unit.x = Path[Path.Length - 1].x; Unit.y = Path[Path.Length - 1].y;
+                    AvailableTilesForAttack = GetRangeAtPoint(Unit.CombatParameters.EquipedWeapon, Path[Path.Length - 1], LevelMap);
                 }
 
                 //If the player wants to cancel the selection, deselect the unit
@@ -191,8 +227,7 @@ public class LevelManager : Map
 
             case Character._State.SelectingAction:
                 //Put up some indicators for what is in range
-                Weapons wep = (Weapons)Unit.Inventory[0];
-                DisplayIndicator(Indicators[2], DijkstraAlgorithm(Path[Path.Length - 1], wep.minRange, wep.maxRange, LevelMap));
+                DisplayIndicator(Indicators[2], AvailableTilesForAttack);
 
                 
                 //If the player wants to confirm an action
@@ -206,7 +241,7 @@ public class LevelManager : Map
                         if (TempUnit == Unit) { DeselectUnit(Character._State.Waiting); }
 
                         //If the player clicks an enemy unit, combat will begin
-                        else if (!TempUnit.CompareTag(SelectedUnit.tag))
+                        else if (!TempUnit.CompareTag(SelectedUnit.tag) && PathContains(LevelMap[TempUnit.x, TempUnit.y], AvailableTilesForAttack))
                         {
                             SelectedUnit.CurrentState = Character._State.InCombat;
 
