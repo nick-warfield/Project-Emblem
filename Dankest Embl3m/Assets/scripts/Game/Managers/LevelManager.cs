@@ -191,6 +191,10 @@ public class LevelManager : Map
             //On input, check to see if a unit can be selected
             if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit") )
             { SetSelectedUnit(Cursor.GetUnitAtCursorPosition(), LevelMap); }
+
+            //on right click, bring up stats
+            if (Input.GetButtonDown("Fire2"))
+            { }
         }
 
         //If a unit is selected, these actions are available

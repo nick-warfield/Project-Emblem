@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Selector : MonoBehaviour
 {
-    [HideInInspector]
+    //[HideInInspector]
     public int x, y;
     float x2, y2, offset;
     Vector3 coordinates;
