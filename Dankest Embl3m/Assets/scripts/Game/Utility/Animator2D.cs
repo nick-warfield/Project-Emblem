@@ -6,7 +6,12 @@ public class Animator2D : MonoBehaviour
 {
     SpriteRenderer Renderer;
     Character.CharacterArt SpriteSheets;
-    float TimeStamp = 0;
+    float TimeStamp = 1;
+    int CurrentFrame = 0;
+
+    //So other functions can read the current frame
+    public int GetCurrentFrame()
+    { return CurrentFrame; }
 
     //Loops through an array of sprites at a certain speed
     public void Animation(Sprite[] Animation, float FrameSpeed)
@@ -14,7 +19,14 @@ public class Animator2D : MonoBehaviour
         if (Time.time >= TimeStamp)
         {
             TimeStamp = Time.time + FrameSpeed;
+            CurrentFrame++;
 
+            if (CurrentFrame >= Animation.Length)
+            { CurrentFrame = 0; }
+
+            Renderer.sprite = Animation[CurrentFrame];
+
+            /*
             for (int i = 0; i < Animation.Length; i++)
             {
                 if (Animation[i] == Renderer.sprite)
@@ -22,11 +34,11 @@ public class Animator2D : MonoBehaviour
                     int nextFrame = i + 1;
                     if (nextFrame >= Animation.Length) { nextFrame = 0; }
 
-                    print(nextFrame);
+                    //print(nextFrame);
                     Renderer.sprite = Animation[nextFrame];
                     break;
                 }
-            }
+            }*/
         }
     }
 

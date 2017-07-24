@@ -269,6 +269,12 @@ public class CombatManager : TacticsBehaviour
         //If the attacker has a special weapon
         if (Attacker.EquipedWeapon.Effect == Weapons.WeaponEffect.DoubleStrike)
         { AttackCount *= 2; }
+
+        //Get Distance
+        int distance = Mathf.Abs(AttackerTerrain.x - DefenderTerrain.x) + Mathf.Abs(AttackerTerrain.y - DefenderTerrain.y);
+        //Check Range
+        if (distance > Attacker.EquipedWeapon.maxRange || distance < Attacker.EquipedWeapon.minRange)
+        { AttackCount = 0; }
         
         //Calculate weapon triangle effect, then apply them
         int[] Modifiers = WeaponTriangleEffect(Attacker.EquipedWeapon, Defender.EquipedWeapon);

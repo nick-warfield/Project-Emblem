@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 16dd2f07b33f25b4a827c059b4798745
-timeCreated: 1500849886
+timeCreated: 1500865429
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -75,10 +75,10 @@ TextureImporter:
       name: Phalanx-01-Blue_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 3
         y: 4
-        width: 24
-        height: 20
+        width: 18
+        height: 19
       alignment: 9
       pivot: {x: 0.5, y: 0.4}
       border: {x: 0, y: 0, z: 0, w: 0}
