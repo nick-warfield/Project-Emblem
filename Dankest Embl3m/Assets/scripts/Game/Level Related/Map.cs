@@ -9,7 +9,7 @@ public class Map : TacticsBehaviour
     public Terrain[,] LevelMap;   //Holds the terrain data. Formatted so that indexes correspond to transforms.
 
     //collides a sphere against the node of a tile, then stores the gameobject collided with.
-    void StoreTilesIntoArray()
+    protected void StoreTilesIntoArray()
     {
         int x = 0;
         int y = 0;

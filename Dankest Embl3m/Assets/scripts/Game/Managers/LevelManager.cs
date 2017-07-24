@@ -34,7 +34,7 @@ public class LevelManager : Map
         {
             //Calculate the movement cost needed to add the tile
             int MoveCost = Unit.AdjustTileMovementCost(NewTile);
-            for (int i = 0; i < CurrentPath.Length; i++)
+            for (int i = 1; i < CurrentPath.Length; i++)
             { MoveCost += Unit.AdjustTileMovementCost(CurrentPath[i]); }
             
             //Add the tile if it there is enough movement for it
@@ -55,6 +55,7 @@ public class LevelManager : Map
         //If all other checks fail, return the shortest path
         else
         {
+            //print("all checks failed");
             Terrain[] temp = ShortenPath(NewTile, CurrentPath[0]);
 
             if (temp == null) { return CurrentPath; }
@@ -136,11 +137,12 @@ public class LevelManager : Map
     }
 
     //Spawns ui tiles to show where i can travel to
+    //Need to do these another way, they are very performance intensive because they are spawning a bunch of things every frame
     private void DisplayIndicator(GameObject Indicator, Terrain[] Tiles)
     {
         for (int i = 0; i < Tiles.Length; i++)
         {
-            GameObject ind = Instantiate(Indicator, new Vector3(Tiles[i].x, Tiles[i].y), transform.rotation);
+            GameObject ind = Instantiate(Indicator, new Vector3(Tiles[i].x, Tiles[i].y, -0.125f), transform.rotation);
             ind.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
         }
     }
@@ -177,7 +179,7 @@ public class LevelManager : Map
         RedTiles = new Terrain[0];
     }
 
-
+    
     // Update is called once per frame
     void Update ()
     {

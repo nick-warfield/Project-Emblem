@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PixelSnap))]
+
 public class Terrain : MonoBehaviour
 {
     //used to determine how Units will interact with the tile
