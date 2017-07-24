@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: f0330fcf207d63245a3c180635bcfd00
-timeCreated: 1500865444
+timeCreated: 1500868676
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -75,10 +75,10 @@ TextureImporter:
       name: Phalanx-01-Red_0
       rect:
         serializedVersion: 2
-        x: 3
+        x: 2
         y: 4
-        width: 18
-        height: 19
+        width: 20
+        height: 20
       alignment: 9
       pivot: {x: 0.5, y: 0.4}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -88,9 +88,9 @@ TextureImporter:
       name: Phalanx-01-Red_1
       rect:
         serializedVersion: 2
-        x: 24
+        x: 26
         y: 4
-        width: 24
+        width: 20
         height: 20
       alignment: 9
       pivot: {x: 0.5, y: 0.4}

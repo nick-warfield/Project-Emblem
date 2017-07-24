@@ -7,6 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator2D))]
+[RequireComponent(typeof(PixelSnap))]
 
 public class Character : MonoBehaviour
 {
@@ -149,5 +150,8 @@ public class Character : MonoBehaviour
     }
 
     private void Update()
-    { transform.position = new Vector3(x, y, transform.position.z); }
+    {
+        float z = -1 + (y / 100f);
+        transform.position = new Vector3(x, y, z);
+    }
 }
