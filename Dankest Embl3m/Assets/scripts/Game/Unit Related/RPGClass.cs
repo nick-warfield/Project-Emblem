@@ -279,8 +279,11 @@ public class RPGClass : Character
     }
 
     //Basic Setup for Stats and stuff
-    private void Start()
+    new void Start()
     {
+        //make sure parent's start function is called
+        base.Start(); 
+
         //auto level a unit to create slight stat variations
         while (exp >= 100) { LevelUp(); }
 

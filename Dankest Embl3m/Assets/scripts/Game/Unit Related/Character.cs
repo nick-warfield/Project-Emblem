@@ -139,7 +139,7 @@ public class Character : MonoBehaviour
         UpdateCoordinatesWithTransformPosition();
     }
 
-    private void Start()
+    protected void Start()
     {
         //Assign a Horoscope Randomly
         if (Horoscope == Horoscopes.Random)

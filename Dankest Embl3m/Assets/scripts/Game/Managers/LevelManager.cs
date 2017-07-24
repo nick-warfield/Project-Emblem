@@ -194,7 +194,18 @@ public class LevelManager : Map
 
             //on right click, bring up stats
             if (Input.GetButtonDown("Fire2"))
-            { }
+            {
+                RPGClass temp = Cursor.GetUnitAtCursorPosition();
+
+                if (temp != null)
+                {
+                    getUnitInfoAdvanced menu = FindObjectOfType<getUnitInfoAdvanced>();
+                    menu.PassStats(temp);
+                }
+                else
+                { getUnitInfoAdvanced menu = FindObjectOfType<getUnitInfoAdvanced>(); menu.CloseMenu(); }
+
+            }
         }
 
         //If a unit is selected, these actions are available
