@@ -246,7 +246,7 @@ public class RPGClass : Character
             //check if slot contains a weapon
             if (Inventory[i] != null && Inventory[i].ItemCategory == Items.ItemType.Weapon)
             {
-                print("weapon found at index " + i);
+                //print("weapon found at index " + i);
                 Weapons temp = Inventory[i].GetComponent<Weapons>();
 
                 //Check to see if the Unit is trained enough to weild the weapon

@@ -215,10 +215,14 @@ public class LevelManager : Map
                 //If the player wants to confirm movement, move the unit to the last tile on the path
                 if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
                 {
-                    Unit.CurrentState = Character._State.SelectingAction;
+                    RPGClass temp = Cursor.GetUnitAtCursorPosition();
+                    if (temp == null || temp == SelectedUnit)
+                    {
+                        Unit.CurrentState = Character._State.SelectingAction;
 
-                    Unit.x = Path[Path.Length - 1].x; Unit.y = Path[Path.Length - 1].y;
-                    AvailableTilesForAttack = GetRangeAtPoint(Unit.CombatParameters.EquipedWeapon, Path[Path.Length - 1], LevelMap);
+                        Unit.x = Path[Path.Length - 1].x; Unit.y = Path[Path.Length - 1].y;
+                        AvailableTilesForAttack = GetRangeAtPoint(Unit.CombatParameters.EquipedWeapon, Path[Path.Length - 1], LevelMap);
+                    }
                 }
 
                 //If the player wants to cancel the selection, deselect the unit

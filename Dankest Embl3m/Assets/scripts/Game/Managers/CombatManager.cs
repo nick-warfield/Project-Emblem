@@ -105,8 +105,6 @@ public class CombatManager : TacticsBehaviour
     //Runs an attack and then returns the combat left so that it can be fed back in with correct timings
     AttackResults[] StartAnimations (AttackResults[] Attacks, AnimationParameters Left, AnimationParameters Right)
     {
-        print(Attacks.Length);
-
         if (Attacks[0].Unit == Left.Unit)
         {
             Left.AnimationObject.GetComponent<Animator>().SetTrigger("Start");
@@ -168,8 +166,7 @@ public class CombatManager : TacticsBehaviour
             Attacker.AttackCount--;
             Defender.HP -= AttackList[AttackList.Count - 1].DamageDealt;
 
-            print("Attacker Attacked. Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
-
+            print(Attacker.UnitReference.name + " Attacked: Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
             if (Defender.HP <= 0) { return AttackList.ToArray(); }
         }
 
@@ -180,7 +177,7 @@ public class CombatManager : TacticsBehaviour
             Defender.AttackCount--;
             Attacker.HP -= AttackList[AttackList.Count - 1].DamageDealt;
 
-            print("Defender Attacked. Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
+            print(Defender.UnitReference.name + " Attacked. Dealt: " + AttackList[AttackList.Count - 1].DamageDealt);
 
             if (Attacker.HP <= 0) { return AttackList.ToArray(); }
         }
@@ -192,7 +189,7 @@ public class CombatManager : TacticsBehaviour
             Attacker.AttackCount--;
             Defender.HP -= AttackList[AttackList.Count - 1].DamageDealt;
 
-            print("Attacker Attacked. Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
+            print(Attacker.UnitReference.name + " Attacked: Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
         }
         else if (Defender.AttackCount > 0)
         {
@@ -200,7 +197,7 @@ public class CombatManager : TacticsBehaviour
             Defender.AttackCount--;
             Attacker.HP -= AttackList[AttackList.Count - 1].DamageDealt;
 
-            print("Defender Attacked. Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
+            print(Defender.UnitReference.name + " Attacked: Dealt " + AttackList[AttackList.Count - 1].DamageDealt);
         }
 
         return AttackList.ToArray();
@@ -286,7 +283,7 @@ public class CombatManager : TacticsBehaviour
         if (Crit < 0) { Crit = 0; } else if (Crit > 100) { Crit = 100; }
         if (Hit < 0) { Hit = 0; } else if (Hit > 100) { Hit = 100; }
 
-        return new DamageRelated(Attacker.UnitReference, Attacker.Health, Damage, Hit, Crit, AttackCount, Modifiers[2]);
+        return new DamageRelated(Attacker.UnitReference, Attacker.UnitReference.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue, Damage, Hit, Crit, AttackCount, Modifiers[2]);
     }
     //Heals are bit different but similar enough, most notable is that you can't heal enemies and you can never heal more than once at a time
     DamageRelated Heal(RPGClass.CombatStats Healer, RPGClass.CombatStats Other)
