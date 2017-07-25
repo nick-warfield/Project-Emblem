@@ -108,6 +108,7 @@
     <Compile Include="Assets\scripts\Game\Utility\DestroyOnBoolNotReset.cs" />
     <Compile Include="Assets\scripts\Game\Utility\Director.cs" />
     <Compile Include="Assets\scripts\Game\Utility\EnumFlagsAttribute.cs" />
+    <Compile Include="Assets\scripts\Game\Utility\getCombatInfo.cs" />
     <Compile Include="Assets\scripts\Game\Utility\getTileInfo.cs" />
     <Compile Include="Assets\scripts\Game\Utility\getUnitInfo.cs" />
     <Compile Include="Assets\scripts\Game\Utility\getUnitInfoAdvanced.cs" />

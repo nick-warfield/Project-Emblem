@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using UnityEngine.UI;
 
 public class CombatManager : TacticsBehaviour
 {
@@ -34,6 +33,10 @@ public class CombatManager : TacticsBehaviour
             RightSide.Unit = Defender; RightSide.Probabilites = DefenderDamageParameters;
             LeftSide.Unit = Attacker; LeftSide.Probabilites = AttackerDamageParameters;
         }
+
+        //Display a window showing combat information
+        getCombatInfo menu = FindObjectOfType<getCombatInfo>();
+        menu.PassStats(AttackerDamageParameters, DefenderDamageParameters);
     }
 
     public void StartCombat()
@@ -52,6 +55,10 @@ public class CombatManager : TacticsBehaviour
         //Set Flag to start animating
         TimeStamp = Time.time + 1.75f;
         SimulateCombat = true;
+
+        //Disable the menu
+        getCombatInfo menu = FindObjectOfType<getCombatInfo>();
+        menu.CloseMenu();
     }
     void EndCombat()
     {

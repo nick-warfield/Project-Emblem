@@ -15,11 +15,14 @@ public class getUnitInfoAdvanced : MonoBehaviour
     public void PassStats(RPGClass Character)
     {
         unitRef = Character;
-
-        transform.parent = EnabledView.transform;
+        transform.SetParent(EnabledView.transform);
+        //transform.parent = EnabledView.transform;
     }
     public void CloseMenu()
-    { transform.parent = DisabledView.transform; }
+    {
+        transform.SetParent(DisabledView.transform);
+        //transform.parent = DisabledView.transform;
+    }
 
     // Update is called once per frame
     void Update()
@@ -46,7 +49,7 @@ public class getUnitInfoAdvanced : MonoBehaviour
                                 "\n" + unitRef.CombatParameters.EquipedWeapon.Name +
                                 "\nATTACK: " + unitRef.CombatParameters.Attack +
                                 "\nHIT: " + unitRef.CombatParameters.HitChance + "\nCRIT: " + unitRef.CombatParameters.CritChance +
-                                "\nATTACK SPEED: " + unitRef.CombatParameters.AttackSpeed +
+                                "\nRANGE: " + unitRef.CombatParameters.EquipedWeapon.maxRange + "-" + unitRef.CombatParameters.EquipedWeapon.maxRange +
                                 "\nDODGE: " + unitRef.CombatParameters.Dodge;
 
             //Get item names from inventory
@@ -72,10 +75,4 @@ public class getUnitInfoAdvanced : MonoBehaviour
                                 "\n" + items[4];
         }
     }
-
-    // Use this for initialization
-    void Start ()
-    {
-        
-	}
 }

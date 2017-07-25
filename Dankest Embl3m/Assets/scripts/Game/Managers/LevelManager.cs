@@ -266,10 +266,10 @@ public class LevelManager : Map
                         {
                             SelectedUnit.CurrentState = Character._State.InCombat;
 
-                            //Create and Set up a combat Manager
+                            //Set up the combat Manager with new stats
                             CombatManager cManager = gameObject.GetComponent<CombatManager>();
                             cManager.InitializeCombatParameters(Unit, TempUnit, LevelMap[Unit.x, Unit.y], LevelMap[TempUnit.x, TempUnit.y]);
-                            cManager.StartCombat();
+                            //cManager.StartCombat();
                         }
                     }
                 }
@@ -285,7 +285,24 @@ public class LevelManager : Map
                 break;
 
             case Character._State.InCombat:
-                if (!GetComponent<CombatManager>().SimulateCombat) { Unit.CurrentState = Character._State.Waiting; }
+                getCombatInfo menu = FindObjectOfType<getCombatInfo>();
+                CombatManager cMan = GetComponent<CombatManager>();
+
+                //End combat after it has been run all the way
+                if (!cMan.SimulateCombat)
+                {
+                    if (menu.transform.parent == menu.DisabledView)
+                    { Unit.CurrentState = Character._State.Waiting; }
+
+                    //on submit action, start combat (only while not already in combat)
+                    else if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
+                    { cMan.StartCombat(); }
+
+                    //on cancel action, go back 1 state
+                    else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
+                    { Unit.CurrentState = Character._State.SelectingAction; }
+                }
+
                 break;
 
             default:
