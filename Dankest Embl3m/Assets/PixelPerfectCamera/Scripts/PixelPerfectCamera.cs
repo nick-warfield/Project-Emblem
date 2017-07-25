@@ -160,12 +160,37 @@ public class PixelPerfectCamera : MonoBehaviour {
 
         cam.orthographicSize = cameraSize;
     }
+    public float adjustCameraFOV(bool GetNewSize)
+    {
+        if (!GetNewSize) { return cam.orthographicSize; }
 
- //   // Use this for initialization
- //   void Start () {
- //       //testMethod();
- //       adjustCameraFOV();
-	//}
+        if (cam == null)
+        {
+            cam = GetComponent<Camera>();
+        }
+        res = new Resolution();
+        res.width = cam.pixelWidth;
+        res.height = cam.pixelHeight;
+        res.refreshRate = Screen.currentResolution.refreshRate;
+
+        if (res.width == 0 || res.height == 0)
+        {
+            return cam.orthographicSize;
+        }
+
+        float maxCameraHalfWidthReq = (maxCameraHalfWidthEnabled) ? maxCameraHalfWidth : -1;
+        float maxCameraHalfHeightReq = (maxCameraHalfHeightEnabled) ? maxCameraHalfHeight : -1;
+        float cameraSize = calculatePixelPerfectCameraSize(pixelPerfect, res, assetsPixelsPerUnit, maxCameraHalfWidthReq, maxCameraHalfHeightReq, targetCameraHalfWidth, targetCameraHalfHeight, targetDimension);
+
+        return cameraSize;
+    }
+
+
+    //   // Use this for initialization
+    //   void Start () {
+    //       //testMethod();
+    //       adjustCameraFOV();
+    //}
 
     void OnEnable()
     {
