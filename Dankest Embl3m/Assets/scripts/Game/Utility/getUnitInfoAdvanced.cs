@@ -36,7 +36,7 @@ public class getUnitInfoAdvanced : MonoBehaviour
                                 "\nLVL: " + unitRef.level + "\tXP: " + unitRef.exp +
                                 "\n" +
                                 "\nHP: " + unitRef.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue + " / " + unitRef.Stats[(int)RPGClass.Stat.HitPoints].staticValue +
-                                "\nSTRESS: " + unitRef.Stats[(int)RPGClass.Stat.Strength].dynamicValue + " / " + unitRef.Stats[(int)RPGClass.Stat.Strength].staticValue;
+                                "\nSTRESS: " + unitRef.Stats[(int)RPGClass.Stat.StressPoints].dynamicValue + " / " + unitRef.Stats[(int)RPGClass.Stat.StressPoints].staticValue;
 
             Columns[1].text =   "STRENGTH: " + unitRef.Stats[(int)RPGClass.Stat.Strength].dynamicValue +
                                 "\nMAGIC: " + unitRef.Stats[(int)RPGClass.Stat.Magic].dynamicValue +
