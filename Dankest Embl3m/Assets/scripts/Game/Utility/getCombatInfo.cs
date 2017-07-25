@@ -33,15 +33,19 @@ public class getCombatInfo : MonoBehaviour
                             "\n" + Stats[0].Damage +
                             "\n" + Stats[0].HitChance +
                             "\n" + Stats[0].CritChance;
+            if (Stats[0].AttackCount > 1) { Info[2].text = "x" + Stats[0].AttackCount; }
+            else { Info[2].text = ""; }
 
             Info[1].text =  "\n\n" +
-                            "\n" +
                             "\n" + Stats[1].HP +
                             "\n" + Stats[1].Damage +
                             "\n" + Stats[1].HitChance +
                             "\n" + Stats[1].CritChance +
+                            "\n" +
                             "\n" + Stats[1].UnitReference.CombatParameters.EquipedWeapon.Name +
                             "\n" + Stats[1].UnitReference.CharacterName;
+            if (Stats[1].AttackCount > 1) { Info[3].text = "x" + Stats[1].AttackCount; }
+            else { Info[3].text = ""; }
         }
     }
 }

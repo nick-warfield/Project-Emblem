@@ -146,6 +146,11 @@ public class LevelManager : Map
             ind.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
         }
     }
+    private void DisplayIndicator(GameObject Indicator, Terrain Tile)
+    {
+        GameObject ind = Instantiate(Indicator, new Vector3(Tile.x, Tile.y, -0.125f), transform.rotation);
+        ind.GetComponent<DestroyOnBoolNotReset>().flagChecked = true;
+    }
 
 
     public void SetSelectedUnit(RPGClass Unit, Terrain[,] Map)
@@ -250,7 +255,7 @@ public class LevelManager : Map
                 //Put up some indicators for what is in range
                 DisplayIndicator(Indicators[2], AvailableTilesForAttack);
 
-                
+
                 //If the player wants to confirm an action
                 if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
                 {
@@ -273,7 +278,7 @@ public class LevelManager : Map
                         }
                     }
                 }
-                
+
 
                 //If the player wants to cancel their move and put the unit back at the starting tile
                 else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
@@ -288,10 +293,15 @@ public class LevelManager : Map
                 getCombatInfo menu = FindObjectOfType<getCombatInfo>();
                 CombatManager cMan = GetComponent<CombatManager>();
 
+                RPGClass tempUnit;
+                if (Unit != cMan.LeftSide.Unit) { tempUnit = cMan.LeftSide.Unit; }
+                else { tempUnit = cMan.RightSide.Unit; }
+                DisplayIndicator(Indicators[2], LevelMap[tempUnit.x, tempUnit.y]);
+
                 //End combat after it has been run all the way
                 if (!cMan.SimulateCombat)
                 {
-                    if (menu.transform.parent == menu.DisabledView)
+                    if (menu.transform.parent.name == menu.DisabledView.name)
                     { Unit.CurrentState = Character._State.Waiting; }
 
                     //on submit action, start combat (only while not already in combat)
@@ -300,7 +310,7 @@ public class LevelManager : Map
 
                     //on cancel action, go back 1 state
                     else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
-                    { Unit.CurrentState = Character._State.SelectingAction; }
+                    { Unit.CurrentState = Character._State.SelectingAction; menu.CloseMenu(); }
                 }
 
                 break;

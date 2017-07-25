@@ -6,7 +6,7 @@ public class Selector : MonoBehaviour
 {
     [HideInInspector]
     public int x, y;
-    float x2, y2, offset;
+    float x2, y2, offset = 0f;
     Vector3 coordinates;
     Terrain[,] MapRef;
 
@@ -42,7 +42,7 @@ public class Selector : MonoBehaviour
 
     private void Update()
     {
-        coordinates = Camera.main.ScreenToWorldPoint(new Vector3 (Input.mousePosition.x, Input.mousePosition.y) );
+        coordinates = Camera.main.ScreenToWorldPoint(new Vector3 (Input.mousePosition.x - offset, Input.mousePosition.y - offset) );
 
         x2 = coordinates.x;
         y2 = coordinates.y;
