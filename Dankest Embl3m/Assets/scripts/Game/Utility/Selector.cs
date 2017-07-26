@@ -6,21 +6,24 @@ public class Selector : MonoBehaviour
 {
     [HideInInspector]
     public int x, y;
-    float x2, y2, offset = 0f;
+    float x2, y2;
     Vector3 coordinates;
     Terrain[,] MapRef;
 
 
     public RPGClass GetUnitAtCursorPosition()
     {
+        //Grabs all of the unit objects in the scene
         RPGClass[] units = GameObject.FindObjectsOfType<RPGClass>();
 
+        //the linear search through them until one with matching coordinates are found
         for (int i = 0; i < units.Length; i++)
         {
             if (units[i].x == x && units[i].y == y)
             { return units[i]; }
         }
 
+        //return null if no object was found
         return null;
     }
 
@@ -29,8 +32,6 @@ public class Selector : MonoBehaviour
     {
         x2 = x = Mathf.RoundToInt(transform.position.x);
         y2 = y = Mathf.RoundToInt(transform.position.y);
-
-        //offset = 0;// GetComponent<SpriteRenderer>().sprite.pixelsPerUnit;
 
         transform.position = new Vector3(x, y, -2);
 
@@ -42,7 +43,7 @@ public class Selector : MonoBehaviour
 
     private void Update()
     {
-        coordinates = Camera.main.ScreenToWorldPoint(new Vector3 (Input.mousePosition.x - offset, Input.mousePosition.y - offset) );
+        coordinates = Camera.main.ScreenToWorldPoint(new Vector3 (Input.mousePosition.x, Input.mousePosition.y) );
 
         x2 = coordinates.x;
         y2 = coordinates.y;

@@ -286,8 +286,8 @@ public class combatManager : MonoBehaviour
         //SpriteRenderer rend;
         if (timeStamp[0] == 0 && timeStamp[1] == 0 && timeStamp[2] == 0 && timeStamp[3] == 0)
         {
-            Sprite aSpr = cr.AttackingUnit.GetComponent<RPGClass>().SpriteSheets.Attack[0];
-            Sprite dSpr = cr.DefendingUnit.GetComponent<RPGClass>().SpriteSheets.Attack[0];
+            Sprite aSpr = cr.AttackingUnit.GetComponent<Animator2D>().SpriteSheets.Attack[0];
+            Sprite dSpr = cr.DefendingUnit.GetComponent<Animator2D>().SpriteSheets.Attack[0];
 
             LeftUnit.GetComponent<SpriteRenderer>().sprite = aSpr;
             RightUnit.GetComponent<SpriteRenderer>().sprite = dSpr;

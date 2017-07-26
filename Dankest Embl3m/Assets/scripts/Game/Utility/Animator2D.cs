@@ -4,8 +4,34 @@ using UnityEngine;
 
 public class Animator2D : MonoBehaviour
 {
+    public Shader PalleteSwap;
+
+    //Holds all of the sprites/shaders that a Character uses during gameplay. To animate I'll create a script that assigns sprites to the sprite renderer.
+    //[System.Serializable]
+    public struct SpriteAnimation
+    {
+        
+        public Sprite[] SpriteSheet;
+        public float FrameSpeed;
+    }
+    public SpriteAnimation[] Animations;
+
+    [System.Serializable]
+    public struct CharacterArt
+    {
+        public Sprite Portrait;
+        public Sprite[] Idle;
+        public Sprite[] Selected;
+        public Sprite[] WalkSide;
+        public Sprite[] WalkFront;
+        public Sprite[] WalkBack;
+        public Sprite[] Attack;
+        public Sprite[] CriticalHit;
+        public Sprite[] Dodge;
+    }
+    public CharacterArt SpriteSheets;
+
     SpriteRenderer Renderer;
-    Character.CharacterArt SpriteSheets;
     float TimeStamp = 1;
     int CurrentFrame = 0;
 
@@ -25,20 +51,6 @@ public class Animator2D : MonoBehaviour
             { CurrentFrame = 0; }
 
             Renderer.sprite = Animation[CurrentFrame];
-
-            /*
-            for (int i = 0; i < Animation.Length; i++)
-            {
-                if (Animation[i] == Renderer.sprite)
-                {
-                    int nextFrame = i + 1;
-                    if (nextFrame >= Animation.Length) { nextFrame = 0; }
-
-                    //print(nextFrame);
-                    Renderer.sprite = Animation[nextFrame];
-                    break;
-                }
-            }*/
         }
     }
 
@@ -48,15 +60,10 @@ public class Animator2D : MonoBehaviour
         Animation(SpriteSheets.Idle, 1f);
     }
 
-    private void Start()
-    {
-        Renderer = gameObject.GetComponent<SpriteRenderer>();
-        SpriteSheets = gameObject.GetComponent<RPGClass>().SpriteSheets;
-    }
 
-    private void Reset()
+    //Grab the Renderer attatched to this object
+    private void OnValidate()
     {
         Renderer = gameObject.GetComponent<SpriteRenderer>();
-        SpriteSheets = gameObject.GetComponent<RPGClass>().SpriteSheets;
     }
 }

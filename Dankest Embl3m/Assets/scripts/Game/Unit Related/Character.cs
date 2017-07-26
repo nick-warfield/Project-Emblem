@@ -32,25 +32,6 @@ public class Character : MonoBehaviour
     public enum Horoscopes { Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius, Pisces, Random };
     public Horoscopes Horoscope = Horoscopes.Random;
 
-    //Holds all of the sprites/shaders that a Character uses during gameplay. To animate I'll create a script that assigns sprites to the sprite renderer.
-    [System.Serializable]
-    public struct CharacterArt
-    {
-        public Sprite Portrait;
-        public Sprite[] Idle;
-        public Sprite[] Selected;
-        public Sprite[] WalkSide;
-        public Sprite[] WalkFront;
-        public Sprite[] WalkBack;
-        public Sprite[] Attack;
-        public Sprite[] CriticalHit;
-        public Sprite[] Dodge;
-
-        public Shader PalleteSwap;
-        public SpriteRenderer Renderer;
-    }
-    public CharacterArt SpriteSheets;
-
 
     //This is where I will add on support functions and stats and stuff. Just need a place holder for now since those are some pretty advanced features.
     public string support = "Support Struct Goes Here";

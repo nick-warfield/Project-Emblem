@@ -99,7 +99,6 @@
     <Compile Include="Assets\scripts\Game\Items\Items.cs" />
     <Compile Include="Assets\scripts\Game\Items\Weapons.cs" />
     <Compile Include="Assets\scripts\Game\Level Related\Map.cs" />
-    <Compile Include="Assets\scripts\Game\Level Related\Selector.cs" />
     <Compile Include="Assets\scripts\Game\Level Related\Terrain.cs" />
     <Compile Include="Assets\scripts\Game\Managers\CombatManager.cs" />
     <Compile Include="Assets\scripts\Game\Managers\InputManager.cs" />
@@ -115,6 +114,7 @@
     <Compile Include="Assets\scripts\Game\Utility\Director.cs" />
     <Compile Include="Assets\scripts\Game\Utility\EnumFlagsAttribute.cs" />
     <Compile Include="Assets\scripts\Game\Utility\MoveCamera.cs" />
+    <Compile Include="Assets\scripts\Game\Utility\Selector.cs" />
     <Compile Include="Assets\scripts\Game\Utility\getCombatInfo.cs" />
     <Compile Include="Assets\scripts\Game\Utility\getTileInfo.cs" />
     <Compile Include="Assets\scripts\Game\Utility\getUnitInfo.cs" />
@@ -145,6 +145,9 @@
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
     <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
     <None Include="Assets\Standard Assets\Prototyping\Shaders\WorldCoordDiffuse.shader" />
+    <None Include="Assets\shaders\testShader.shader" />
+    <None Include="Assets\shaders\testShader2.compute" />
+    <None Include="Assets\shaders\testShader3.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
