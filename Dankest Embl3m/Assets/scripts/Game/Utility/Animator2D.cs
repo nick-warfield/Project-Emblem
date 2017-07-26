@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class Animator2D : MonoBehaviour
 {
-    public Shader PalleteSwap;
+    //public Shader PalleteSwap;
 
     //Holds all of the sprites/shaders that a Character uses during gameplay. To animate I'll create a script that assigns sprites to the sprite renderer.
     //[System.Serializable]
-    public struct SpriteAnimation
+    /*public struct SpriteAnimation
     {
         
         public Sprite[] SpriteSheet;
         public float FrameSpeed;
     }
     public SpriteAnimation[] Animations;
-
+    */
     [System.Serializable]
     public struct CharacterArt
     {
@@ -62,7 +62,7 @@ public class Animator2D : MonoBehaviour
 
 
     //Grab the Renderer attatched to this object
-    private void OnValidate()
+    private void Start()
     {
         Renderer = gameObject.GetComponent<SpriteRenderer>();
     }
