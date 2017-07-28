@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //use requirecomponent to auto assign all the components needed to build a character
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(BoxCollider))]
+//[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(Animator2D))]
 [RequireComponent(typeof(PixelSnap))]
@@ -120,6 +120,7 @@ public class Character : MonoBehaviour
         UpdateCoordinatesWithTransformPosition();
     }
 
+    SpriteRenderer Renderer;
     protected void Start()
     {
         //Assign a Horoscope Randomly
@@ -128,11 +129,17 @@ public class Character : MonoBehaviour
 
         //Snap character into allignment
         transform.position = new Vector3(x, y, -1);
+
+        //Assign the renderer component for reference
+        Renderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
     {
-        float z = -1 + (y / 100f);
-        transform.position = new Vector3(x, y, z);
+        //float z = -1 + (y / 100f);
+        //transform.position = new Vector3(x, y, z);
+
+        Renderer.sortingOrder = x - y;
+        transform.position = new Vector3(x, y);
     }
 }

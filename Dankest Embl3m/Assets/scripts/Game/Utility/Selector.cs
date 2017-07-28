@@ -33,7 +33,7 @@ public class Selector : MonoBehaviour
         x2 = x = Mathf.RoundToInt(transform.position.x);
         y2 = y = Mathf.RoundToInt(transform.position.y);
 
-        transform.position = new Vector3(x, y, -2);
+        transform.position = new Vector3(x, y);
 
         Cursor.visible = false;
 
