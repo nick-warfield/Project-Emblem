@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 public class getTileInfo : MonoBehaviour
 {
-    Text txt;
+    public Text[] txt;
     Terrain[,] mapRef;
     Selector cursor;
 
 	// Use this for initialization
 	void Start ()
     {
-        txt = GetComponent<Text>();
+        //txt = GetComponent<Text>();
         cursor = FindObjectOfType<Selector>();
         mapRef = FindObjectOfType<Map>().LevelMap;
 	}
@@ -24,7 +24,11 @@ public class getTileInfo : MonoBehaviour
 
         if (tile != null)
         {
-            txt.text = tile.Type.ToString() + "\nDodge: " + tile.DodgeBonus + "\nDef: " + tile.DefenseBonus;
+            txt[0].text = tile.Type.ToString();
+            txt[1].text = tile.DodgeBonus.ToString();
+            txt[2].text = tile.DefenseBonus.ToString();
+
+            //txt.text = tile.Type.ToString() + "\nDodge: " + tile.DodgeBonus + "\nDef: " + tile.DefenseBonus;
         }
 	}
 }

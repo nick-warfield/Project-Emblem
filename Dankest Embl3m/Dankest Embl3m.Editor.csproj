@@ -133,7 +133,7 @@
     <Compile Include="Assets\scripts\Editor\ReadOnlyAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\PixelPerfectCamera\README.txt" />
+    <None Include="Assets\misc\PixelPerfectCamera\README.txt" />
     <None Include="Assets\shaders\NewImageEffectShader.shader" />
     <None Include="Assets\shaders\Palette Swap.shader" />
     <None Include="Assets\shaders\testShader.shader" />

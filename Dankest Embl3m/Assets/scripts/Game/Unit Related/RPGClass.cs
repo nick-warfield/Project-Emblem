@@ -133,7 +133,7 @@ public class RPGClass : Character
 
                 //Calculate Hit and Crit Chance
                 HitChance = (Unit.Stats[(int)Stat.Skill].dynamicValue * 2) + (Unit.Stats[(int)Stat.Luck].dynamicValue / 2) + Weapon.HitChance;
-                CritChance = (Unit.Stats[(int)Stat.Skill].dynamicValue * 2) + (Unit.Stats[(int)Stat.Luck].dynamicValue / 4);
+                CritChance = (Unit.Stats[(int)Stat.Skill].dynamicValue * 2) + (Unit.Stats[(int)Stat.Luck].dynamicValue / 4) + Weapon.CritChance;
 
                 //Calculate Damage, Physical attacks use strength while magical attacks use magic
                 if (DamageType == Weapons.Damage.Physical)

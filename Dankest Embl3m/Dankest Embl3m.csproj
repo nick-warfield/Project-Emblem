@@ -78,13 +78,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\changeTex.cs" />
-    <Compile Include="Assets\PixelPerfectCamera\Scripts\CanvasScreenSpaceScaler.cs" />
-    <Compile Include="Assets\PixelPerfectCamera\Scripts\CanvasWorldScaler.cs" />
-    <Compile Include="Assets\PixelPerfectCamera\Scripts\Internal\VectorSwizzleExtensions.cs" />
-    <Compile Include="Assets\PixelPerfectCamera\Scripts\PixelPerfectCamera.cs" />
-    <Compile Include="Assets\PixelPerfectCamera\Scripts\PixelSnap.cs" />
-    <Compile Include="Assets\PixelPerfectCamera\Scripts\Scroller.cs" />
+    <Compile Include="Assets\misc\PixelPerfectCamera\Scripts\CanvasScreenSpaceScaler.cs" />
+    <Compile Include="Assets\misc\PixelPerfectCamera\Scripts\CanvasWorldScaler.cs" />
+    <Compile Include="Assets\misc\PixelPerfectCamera\Scripts\Internal\VectorSwizzleExtensions.cs" />
+    <Compile Include="Assets\misc\PixelPerfectCamera\Scripts\PixelPerfectCamera.cs" />
+    <Compile Include="Assets\misc\PixelPerfectCamera\Scripts\PixelSnap.cs" />
+    <Compile Include="Assets\misc\PixelPerfectCamera\Scripts\Scroller.cs" />
+    <Compile Include="Assets\scripts\changeTex.cs" />
     <Compile Include="Assets\scripts\Game\Items\Items.cs" />
     <Compile Include="Assets\scripts\Game\Items\Weapons.cs" />
     <Compile Include="Assets\scripts\Game\Level Related\Map.cs" />
@@ -129,7 +129,7 @@
     <Compile Include="Assets\scripts\scratch\unitController03.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\PixelPerfectCamera\README.txt" />
+    <None Include="Assets\misc\PixelPerfectCamera\README.txt" />
     <None Include="Assets\shaders\NewImageEffectShader.shader" />
     <None Include="Assets\shaders\Palette Swap.shader" />
     <None Include="Assets\shaders\testShader.shader" />
