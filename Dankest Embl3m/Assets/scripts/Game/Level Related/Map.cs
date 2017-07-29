@@ -59,6 +59,35 @@ public class Map : TacticsBehaviour
         while (!didYIncrementTwiceInARow);
     }
 
+    void storeTest()
+    {
+        Terrain[] tiles = GameObject.FindObjectsOfType<Terrain>();
+
+        //sort array by x coordinate
+        System.Array.Sort(tiles, (left, right) => left.transform.position.x.CompareTo(right.transform.position.x));
+
+        //calculate map dimensions based on the length and the area
+        int x = Mathf.RoundToInt(tiles[tiles.Length - 1].transform.position.x) + 1;
+        int y = tiles.Length / x;
+
+        //set map to calculated dimensions
+        LevelMap = new Terrain[x, y];
+
+        //take a column and sort it by y value, then fill the map with the sorted contents
+        int k = 0;
+        for (int i = 0; i < x; i++)
+        {
+            Terrain[] ysort = new Terrain[y];
+            for (int j = 0; j < y; j++)
+            { ysort[j] = tiles[k]; k++; }
+
+            System.Array.Sort(ysort, (left, right) => left.transform.position.y.CompareTo(right.transform.position.y));
+
+            for (int j = 0; j < y; j++) { LevelMap[i, j] = ysort[j]; }
+        }
+    }
+
+
     //In case I want to make sure that my indexes are lining up correctly
     void CheckIndexMatchPosition ()
     {
@@ -72,5 +101,5 @@ public class Map : TacticsBehaviour
     }
 
     private void Awake()
-    {StoreTilesIntoArray(); }
+    { storeTest(); }
 }
