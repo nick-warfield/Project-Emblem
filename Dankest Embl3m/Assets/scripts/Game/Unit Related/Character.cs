@@ -134,7 +134,7 @@ public class Character : MonoBehaviour
         Renderer = GetComponent<SpriteRenderer>();
     }
 
-    private void Update()
+    protected void Update()
     {
         //float z = -1 + (y / 100f);
         //transform.position = new Vector3(x, y, z);

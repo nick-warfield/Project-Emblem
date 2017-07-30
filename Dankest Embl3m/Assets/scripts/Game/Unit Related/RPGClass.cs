@@ -290,4 +290,14 @@ public class RPGClass : Character
         //Initialize Combat Parameters
         CombatParameters = new CombatStats(this, EquipWeapon(Inventory, WeaponStats) );
     }
+
+    //Stuff to check for as the game is running
+    new void Update()
+    {
+        base.Update();
+
+        //'kill' a unit if they are dead
+        if (Stats[0].dynamicValue <= 0)
+        { Destroy(gameObject); }
+    }
 }
