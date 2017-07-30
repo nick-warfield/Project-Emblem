@@ -15,12 +15,12 @@ public class getUnitInfoAdvanced : MonoBehaviour
     public void PassStats(RPGClass Character)
     {
         unitRef = Character;
-        transform.SetParent(EnabledView.transform);
+        transform.SetParent(EnabledView.transform, false);
         //transform.parent = EnabledView.transform;
     }
     public void CloseMenu()
     {
-        transform.SetParent(DisabledView.transform);
+        transform.SetParent(DisabledView.transform, false);
         //transform.parent = DisabledView.transform;
     }
 
