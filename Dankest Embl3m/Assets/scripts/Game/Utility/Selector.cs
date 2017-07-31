@@ -9,6 +9,7 @@ public class Selector : MonoBehaviour
     float x2, y2;
     Vector3 coordinates;
     Terrain[,] MapRef;
+    AudioSource soundMaker;
 
 
     public RPGClass GetUnitAtCursorPosition()
@@ -38,6 +39,8 @@ public class Selector : MonoBehaviour
         Cursor.visible = false;
 
         MapRef = FindObjectOfType<Map>().LevelMap;
+
+        soundMaker = GetComponent<AudioSource>();
     }
 
 
@@ -55,6 +58,9 @@ public class Selector : MonoBehaviour
 
         if (x < 0) { x = 0; } else if (x >= MapRef.GetLength(0)) { x = MapRef.GetLength(0) - 1; }
         if (y < 0) { y = 0; } else if (y >= MapRef.GetLength(1)) { y = MapRef.GetLength(1) - 1; }
+
+
+        if (transform.position.x != x || transform.position.y != y) { soundMaker.Play(); }
 
         transform.position = new Vector3(x, y, -2);
     }

@@ -8,6 +8,9 @@ public class LevelManager : Map
     public Selector Cursor;
     public GameObject[] Indicators;
 
+    public AudioSource SoundPlayer;
+    public AudioClip SelectNoise, CancelNoise;
+
     [HideInInspector] public Terrain[] AvailableTilesForTravel;
     [HideInInspector] public Terrain[] AvailableTilesForAttack;
     [HideInInspector] public Terrain[] Path;
@@ -195,7 +198,10 @@ public class LevelManager : Map
         {
             //On input, check to see if a unit can be selected
             if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit") )
-            { SetSelectedUnit(Cursor.GetUnitAtCursorPosition(), LevelMap); }
+            {
+                SetSelectedUnit(Cursor.GetUnitAtCursorPosition(), LevelMap);
+                SoundPlayer.clip = SelectNoise; SoundPlayer.Play();
+            }
 
             //on right click, bring up stats
             if (Input.GetButtonDown("Fire2"))
@@ -206,9 +212,13 @@ public class LevelManager : Map
                 {
                     getUnitInfoAdvanced menu = FindObjectOfType<getUnitInfoAdvanced>();
                     menu.PassStats(temp);
+                    SoundPlayer.clip = SelectNoise; SoundPlayer.Play();
                 }
                 else
-                { getUnitInfoAdvanced menu = FindObjectOfType<getUnitInfoAdvanced>(); menu.CloseMenu(); }
+                {
+                    getUnitInfoAdvanced menu = FindObjectOfType<getUnitInfoAdvanced>(); menu.CloseMenu();
+                    SoundPlayer.clip = CancelNoise; SoundPlayer.Play();
+                }
 
             }
         }
@@ -242,12 +252,17 @@ public class LevelManager : Map
 
                         Unit.x = Path[Path.Length - 1].x; Unit.y = Path[Path.Length - 1].y;
                         AvailableTilesForAttack = GetRangeAtPoint(Unit.CombatParameters.EquipedWeapon, Path[Path.Length - 1], LevelMap);
+
+                        SoundPlayer.clip = SelectNoise; SoundPlayer.Play();
                     }
                 }
 
                 //If the player wants to cancel the selection, deselect the unit
                 else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
-                { DeselectUnit(Character._State.Idle); }
+                {
+                    DeselectUnit(Character._State.Idle);
+                    SoundPlayer.clip = CancelNoise; SoundPlayer.Play();
+                }
 
                 break;
 
@@ -264,7 +279,7 @@ public class LevelManager : Map
                     if (TempUnit != null)
                     {
                         //If the player clicks the selected unit they will begin waiting
-                        if (TempUnit == Unit) { DeselectUnit(Character._State.Waiting); }
+                        if (TempUnit == Unit) { DeselectUnit(Character._State.Waiting); SoundPlayer.clip = SelectNoise; SoundPlayer.Play(); }
 
                         //If the player clicks an enemy unit, combat will begin
                         else if (!TempUnit.CompareTag(SelectedUnit.tag) && PathContains(LevelMap[TempUnit.x, TempUnit.y], AvailableTilesForAttack))
@@ -275,6 +290,7 @@ public class LevelManager : Map
                             CombatManager cManager = gameObject.GetComponent<CombatManager>();
                             cManager.InitializeCombatParameters(Unit, TempUnit, LevelMap[Unit.x, Unit.y], LevelMap[TempUnit.x, TempUnit.y]);
                             //cManager.StartCombat();
+                            SoundPlayer.clip = SelectNoise; SoundPlayer.Play();
                         }
                     }
                 }
@@ -285,6 +301,7 @@ public class LevelManager : Map
                 {
                     Unit.x = Path[0].x; Unit.y = Path[0].y;
                     SetSelectedUnit(Unit, LevelMap);    //If I don't recalculate all of the pathfinding, the game crashes
+                    SoundPlayer.clip = CancelNoise; SoundPlayer.Play();
                 }
 
                 break;
@@ -306,11 +323,11 @@ public class LevelManager : Map
 
                     //on submit action, start combat (only while not already in combat)
                     else if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
-                    { cMan.StartCombat(); }
+                    { cMan.StartCombat(); SoundPlayer.clip = SelectNoise; SoundPlayer.Play(); }
 
                     //on cancel action, go back 1 state
                     else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
-                    { Unit.CurrentState = Character._State.SelectingAction; menu.CloseMenu(); }
+                    { Unit.CurrentState = Character._State.SelectingAction; menu.CloseMenu(); SoundPlayer.clip = CancelNoise; SoundPlayer.Play(); }
                 }
 
                 break;
