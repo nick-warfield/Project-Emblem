@@ -61,38 +61,123 @@ public class Character : MonoBehaviour
     }
 
     //bad things happen to units that hit 0HP
-    protected virtual void DeathsDoor(int Constitution, int Luck, int CurrentHP, int MaxHP)
+    public virtual void DeathsDoor(int Constitution, int Luck, int CurrentHP, int MaxHP)
     {
-        float RolledNum = Random.value * 100;
-        int trauma = TraumaCounter * 10;
+        int RolledNum = Random.Range(0, 100);
+        //int trauma = TraumaCounter * 10;
 
         //get up if really lucky
-        if (RolledNum <= 1)
-        {
-            CurrentHP = MaxHP / 2;
-        }
+        if (RolledNum < 1)
+        { CurrentHP = MaxHP / 4; }
 
-        //kill unit if they are real unlucky
-        if (RolledNum + trauma > (Constitution * 4) || RolledNum >= 99)
-        {
-            Destroy(gameObject);
-        }
+        //Die if really unlucky
+        else if (RolledNum > 99)
+        { Die(); }
 
-        //a chance to remain unscathed
-        if (RolledNum + trauma > (Constitution * 2))
-        {
-            TraumaCounter += 1;
-            GainInjury();
-        }
+        //Now start checking for different types of injury
+        RolledNum = RolledNum + (TraumaCounter * 10) - (Constitution * 2) - (Luck);
+
+        if (RolledNum < 0)
+        { return; }
+        else if (RolledNum < 40)
+        { MinorInjury(RolledNum); }
+        else if (RolledNum < 70)
+        { SeriousInjury(RolledNum); }
+        else if (RolledNum < 100)
+        { PermanentInjury(RolledNum); }
+        else if (RolledNum < 150)
+        { FatalInjury(RolledNum); }
+        else
+        { Die(); }
+
+        TraumaCounter += 1;
     }
 
-    //checks to see if a unit gains an injury, then assigns it to them if they did
-    protected void GainInjury()
+    //Character Dies Permanently
+    public void Die()
+    { Destroy(gameObject); }
+
+    //Character is fatally injured and will die
+    void FatalInjury (float roll)
     {
-        //A table to roll on to see what kind of disability this unit will suffer, at high values this unit's death becomes certain. See Star Wars tabletop RPG for inspiration.
-        //Could possibly avoid injury at a low value. Could also gain permanent disabilites, such as losing an eye or limb.
-        //Trauma increases the value, making higher values more common.
+        Injury newInjury = gameObject.AddComponent<Injury>();
+        newInjury.Victim = GetComponent<RPGClass>();
+        newInjury.Severity = Injury.InjuryLevel.Fatal;
+        newInjury.Name = newInjury.Severity.ToString() + ": " + roll;
+
+        if (newInjury.Victim != null)
+        {
+            newInjury.AffectedStats = new Injury.StatPenalty[5]
+            {
+                new Injury.StatPenalty(RPGClass.Stat.Strength, -2),
+                new Injury.StatPenalty(RPGClass.Stat.Magic, -2),
+                new Injury.StatPenalty(RPGClass.Stat.Speed, -2),
+                new Injury.StatPenalty(RPGClass.Stat.Skill, -2),
+                new Injury.StatPenalty(RPGClass.Stat.Move, -1)
+            };
+            newInjury.ApplyDebuff();
+        }
     }
+
+    //Character gains a permanent injury
+    void PermanentInjury (float roll)
+    {
+        Injury newInjury = gameObject.AddComponent<Injury>();
+        newInjury.Victim = GetComponent<RPGClass>();
+        newInjury.Severity = Injury.InjuryLevel.Permanent;
+        newInjury.Name = newInjury.Severity.ToString() + ": " + roll;
+
+        if (newInjury.Victim != null)
+        {
+            newInjury.AffectedStats = new Injury.StatPenalty[3]
+            {
+                new Injury.StatPenalty(RPGClass.Stat.Speed, -2),
+                new Injury.StatPenalty(RPGClass.Stat.Skill, -2),
+                new Injury.StatPenalty(RPGClass.Stat.Move, -1)
+            };
+            newInjury.ApplyDebuff();
+        }
+    }
+
+    //Character gains an injury that will affect them for the rest of the encounter
+    void SeriousInjury (float roll)
+    {
+        Injury newInjury = gameObject.AddComponent<Injury>();
+        newInjury.Victim = GetComponent<RPGClass>();
+        newInjury.Severity = Injury.InjuryLevel.Serious;
+        newInjury.Name = newInjury.Severity.ToString() + ": " + roll;
+
+        if (newInjury.Victim != null)
+        {
+            newInjury.AffectedStats = new Injury.StatPenalty[3]
+            {
+                new Injury.StatPenalty(RPGClass.Stat.Strength, -1),
+                new Injury.StatPenalty(RPGClass.Stat.Magic, -1),
+                new Injury.StatPenalty(RPGClass.Stat.Speed, -1)
+            };
+            newInjury.ApplyDebuff();
+        }
+    }
+
+    //Character gains a light injury that will go away after some time
+    void MinorInjury (float roll)
+    {
+        Injury newInjury = gameObject.AddComponent<Injury>();
+        newInjury.Victim = GetComponent<RPGClass>();
+        newInjury.Severity = Injury.InjuryLevel.Minor;
+        newInjury.Name = newInjury.Severity.ToString() + ": " + roll;
+
+        if (newInjury.Victim != null)
+        {
+            newInjury.AffectedStats = new Injury.StatPenalty[2]
+            {
+                new Injury.StatPenalty(RPGClass.Stat.Strength, -1),
+                new Injury.StatPenalty(RPGClass.Stat.Magic, -1)
+            };
+            newInjury.ApplyDebuff();
+        }
+    }
+
 
 
     //used to instantiate default values in editor once a component is added/reset to a gameobject
@@ -139,6 +224,7 @@ public class Character : MonoBehaviour
         //float z = -1 + (y / 100f);
         //transform.position = new Vector3(x, y, z);
 
+        //update character position and rendering order (to simulate depth)
         Renderer.sortingOrder = x - y;
         transform.position = new Vector3(x, y);
     }

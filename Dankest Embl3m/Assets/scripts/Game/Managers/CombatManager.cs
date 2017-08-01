@@ -116,13 +116,47 @@ public class CombatManager : TacticsBehaviour
         {
             Left.AnimationObject.GetComponent<Animator>().SetTrigger("Start");
             Right.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue -= Attacks[0].DamageDealt;
+            Right.Unit.Stats[(int)RPGClass.Stat.StressPoints].dynamicValue += (Attacks[0].DamageDealt - (Right.Unit.Stats[(int)RPGClass.Stat.Willpower].dynamicValue / 2) );
+            //print(Right.Unit.Stats[(int)RPGClass.Stat.StressPoints].dynamicValue);
+
             Right.Unit.ClampHP();
+            Right.Unit.ClampStress();
+
+            if (Right.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue <= 0 && !Attacks[0].Miss)
+            {
+                if (Right.Unit.FodderCharacter)
+                { Right.Unit.Die(); }
+                else
+                {
+                    Right.Unit.DeathsDoor(Right.Unit.Stats[(int)RPGClass.Stat.Constitution].dynamicValue,
+                                          Right.Unit.Stats[(int)RPGClass.Stat.Luck].dynamicValue,
+                                          Right.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue,
+                                          Right.Unit.Stats[(int)RPGClass.Stat.HitPoints].staticValue);
+                }
+            }
         }
         else
         {
             Right.AnimationObject.GetComponent<Animator>().SetTrigger("Start");
             Left.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue -= Attacks[0].DamageDealt;
+            Left.Unit.Stats[(int)RPGClass.Stat.StressPoints].dynamicValue += (Attacks[0].DamageDealt - (Left.Unit.Stats[(int)RPGClass.Stat.Willpower].dynamicValue / 2) );
+            //print(Left.Unit.Stats[(int)RPGClass.Stat.StressPoints].dynamicValue);
+
             Left.Unit.ClampHP();
+            Left.Unit.ClampStress();
+
+            if (Left.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue <= 0 && !Attacks[0].Miss)
+            {
+                if (Left.Unit.FodderCharacter)
+                { Left.Unit.Die(); }
+                else
+                {
+                    Left.Unit.DeathsDoor(Left.Unit.Stats[(int)RPGClass.Stat.Constitution].dynamicValue,
+                                            Left.Unit.Stats[(int)RPGClass.Stat.Luck].dynamicValue,
+                                            Left.Unit.Stats[(int)RPGClass.Stat.HitPoints].dynamicValue,
+                                            Left.Unit.Stats[(int)RPGClass.Stat.HitPoints].staticValue);
+                }
+            }
         }
 
         List<AttackResults> Reduced = new List<AttackResults> { };

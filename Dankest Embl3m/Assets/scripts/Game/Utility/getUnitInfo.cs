@@ -41,7 +41,16 @@ public class getUnitInfo : MonoBehaviour
             bar[0].rectTransform.localScale = new Vector3(percent, 1, 1);
 
             percent = (float)unitRef.Stats[1].dynamicValue / unitRef.Stats[1].staticValue;
-            bar[1].rectTransform.localScale = new Vector3(percent, 1, 1);
+            if (percent <= 1)
+            {
+                bar[1].rectTransform.localScale = new Vector3(percent, 1, 1);
+                bar[2].rectTransform.localScale = new Vector3(0, 1, 1);
+            }
+            else
+            {
+                bar[1].rectTransform.localScale = new Vector3(1, 1, 1);
+                bar[2].rectTransform.localScale = new Vector3(percent - 1, 1, 1);
+            }
 
             //RPGClass unit = mapRef[x, y, ].GetComponent<RPGClass>();
             //string name = mapRef[x, y, 1].GetComponent<Character>().CharacterName;

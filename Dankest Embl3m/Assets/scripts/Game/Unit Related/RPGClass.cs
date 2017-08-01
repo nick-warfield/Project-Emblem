@@ -45,7 +45,7 @@ public class RPGClass : Character
     public ClassStats[] Stats = new ClassStats[14]
     {
         new ClassStats("Hit Points", 15, 15, 15, 60, 50, "-"),      //0 - How many hits the character can take before becoming unresponsive and able to take injury/death.
-        new ClassStats("Stress Points", 0, 15, 15, 30, 0, "-"),     //1 - How much stress the unit can acumulate before losing it. They then act unpredicatably.
+        new ClassStats("Stress Points", 0, 15, 15, 30, 100, "-"),   //1 - How much stress the unit can acumulate before losing it. They then act unpredicatably.
         new ClassStats("Strength", 5, 5, 5, 20, 30, "-"),           //2 - Adds damage to strength based weapons.
         new ClassStats("Magic", 5, 5, 5, 20, 30, "-"),              //3 - Adds damage to magic based weapons.
         new ClassStats("Speed", 5, 5, 5, 20, 30, "-"),              //4 - Units can attack twice if they are much faster than the other unit. The faster a unit is, the more often they dodge.
@@ -229,7 +229,9 @@ public class RPGClass : Character
 
                 //increase the stat in question by the statIncrease variable(never falls below 0)
                 Stats[i].staticValue += statIncrease;
-                Stats[i].dynamicValue += statIncrease;
+
+                if (i != (int)Stat.StressPoints)
+                { Stats[i].dynamicValue += statIncrease; }
             }
         }
 
@@ -278,6 +280,17 @@ public class RPGClass : Character
         { Stats[(int)Stat.HitPoints].dynamicValue = Stats[(int)Stat.HitPoints].staticValue; }
     }
 
+    //keep stress between 0 and double the max value
+    public void ClampStress ()
+    {
+        if (Stats[(int)Stat.StressPoints].dynamicValue < 0)
+        { Stats[(int)Stat.StressPoints].dynamicValue = 0; }
+
+        else if (Stats[(int)Stat.StressPoints].dynamicValue > 2 * Stats[(int)Stat.StressPoints].staticValue)
+        { Stats[(int)Stat.StressPoints].dynamicValue = 2 * Stats[(int)Stat.StressPoints].staticValue; }
+    }
+
+
     //Basic Setup for Stats and stuff
     new void Start()
     {
@@ -297,7 +310,7 @@ public class RPGClass : Character
         base.Update();
 
         //'kill' a unit if they are dead
-        if (Stats[0].dynamicValue <= 0)
-        { Destroy(gameObject); }
+        //if (Stats[0].dynamicValue <= 0)
+        //{ Destroy(gameObject); }
     }
 }

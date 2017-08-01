@@ -97,8 +97,10 @@
     <Compile Include="Assets\scripts\Game\Managers\TurnManager.cs" />
     <Compile Include="Assets\scripts\Game\Unit Related\Character.cs" />
     <Compile Include="Assets\scripts\Game\Unit Related\FlyingUnit.cs" />
+    <Compile Include="Assets\scripts\Game\Unit Related\Injury.cs" />
     <Compile Include="Assets\scripts\Game\Unit Related\MountedUnit.cs" />
     <Compile Include="Assets\scripts\Game\Unit Related\RPGClass.cs" />
+    <Compile Include="Assets\scripts\Game\Unit Related\Trait.cs" />
     <Compile Include="Assets\scripts\Game\Utility\Animator2D.cs" />
     <Compile Include="Assets\scripts\Game\Utility\DestroyOnBoolNotReset.cs" />
     <Compile Include="Assets\scripts\Game\Utility\Director.cs" />
