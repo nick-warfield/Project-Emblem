@@ -186,8 +186,9 @@ public class Character : MonoBehaviour
     {
         tag = "Red Team";
         gameObject.layer = 13;
-        transform.position = new Vector3(0, 0, -1f);
+        //transform.position = new Vector3(0, 0, -1f);
 
+        /*
         Rigidbody charRB = gameObject.GetComponent<Rigidbody>();
         BoxCollider charBOX = gameObject.GetComponent<BoxCollider>();
 
@@ -197,6 +198,7 @@ public class Character : MonoBehaviour
         charRB.freezeRotation = true;
 
         charBOX.size = new Vector3(0.5f, 0.5f, 0.5f);
+        */
     }
 
     private void Awake()

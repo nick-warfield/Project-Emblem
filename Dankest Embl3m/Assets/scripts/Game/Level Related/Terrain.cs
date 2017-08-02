@@ -7,7 +7,7 @@ using UnityEngine;
 public class Terrain : MonoBehaviour
 {
     //used to determine how Units will interact with the tile
-    public enum Tile { Wall, Plain, Forrest, Fort };
+    public enum Tile { Wall, Plain, Forrest, Fort, River, Mountain };
     public Tile Type;
 
     //Tile Stats, how much an average unit pays to travel it, plus any bonuses the terrain offers
