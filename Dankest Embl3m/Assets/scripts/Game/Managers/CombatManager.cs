@@ -53,7 +53,7 @@ public class CombatManager : TacticsBehaviour
         mainCam.enabled = false;
 
         //Set Flag to start animating
-        TimeStamp = Time.time + 1.75f;
+        TimeStamp = Time.time + 2.25f;
         SimulateCombat = true;
 
         //Disable the menu
@@ -80,7 +80,7 @@ public class CombatManager : TacticsBehaviour
                 if (TheStack.Length > 0)
                 {
                     TheStack = StartAnimations(TheStack, LeftSide, RightSide);
-                    TimeStamp = Time.time + 1.25f;
+                    TimeStamp = Time.time + 1.75f;
                 }
                 else
                 { EndCombat(); }

@@ -51,6 +51,12 @@ public class InputManager : MonoBehaviour
 
         if (Time.time >= timeStamp)
         {
+            if (Input.GetAxis("Mouse Horizontal") != 0 || Input.GetAxis("Mouse Vertical") != 0)
+            {
+                pans.Add(new MousePositionCommand() );
+                return pans.ToArray();
+            }
+
             timeStamp = Time.time + 0.075f;
 
             //Check controller inputs and then add them to the lise
@@ -62,12 +68,22 @@ public class InputManager : MonoBehaviour
             //return list if there is something so that controller inputs override keyboard inputs
             if (pans.Count > 0) { return pans.ToArray(); }
 
+            //check d-pad inputs here
+            if (Input.GetAxis("Xbox D-Pad Horizontal") > 0) { pans.Add(right); }
+            else if (Input.GetAxis("Xbox D-Pad Horizontal") < 0) { pans.Add(left); }
+            if (Input.GetAxis("Xbox D-Pad Vertical") > 0) { pans.Add(up); }
+            else if (Input.GetAxis("Xbox D-Pad Vertical") < 0) { pans.Add(down); }
+
+            //return list if there is something so that controller inputs override keyboard inputs
+            if (pans.Count > 0) { return pans.ToArray(); }
+
             //check keyboard inputs here
             if (Input.GetKey(MoveButton[0])) { pans.Add(right); }
             else if (Input.GetKey(MoveButton[1])) { pans.Add(left); }
             if (Input.GetKey(MoveButton[2])) { pans.Add(up); }
             else if (Input.GetKey(MoveButton[3])) { pans.Add(down); }
         }
+
 
         //return whatever here
         return pans.ToArray();

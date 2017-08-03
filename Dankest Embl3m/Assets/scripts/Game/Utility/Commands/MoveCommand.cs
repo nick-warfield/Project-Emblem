@@ -35,6 +35,17 @@ public class MoveCommand : Command
     { sens = newSensitivity; }
 }
 
+public class MousePositionCommand : MoveCommand
+{
+    public override void Execute(GameObject GameActor)
+    {
+        Vector3 coordinates = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y));
+        int x2 = Mathf.RoundToInt(coordinates.x);
+        int y2 = Mathf.RoundToInt(coordinates.y);
+
+        GameActor.transform.position = new Vector3(x2, y2, GameActor.transform.position.z);
+    }
+}
 
 public class DownCommand : MoveCommand
 {
