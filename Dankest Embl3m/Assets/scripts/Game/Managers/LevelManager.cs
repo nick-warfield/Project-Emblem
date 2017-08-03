@@ -227,7 +227,7 @@ public class LevelManager : Map
             else if (Input.GetKeyDown(inputs.FaceButton[1]) )
             {
                 getUnitInfoAdvanced menu = FindObjectOfType<getUnitInfoAdvanced>();
-                if (menu.transform.parent == menu.EnabledView)
+                if (menu.unitRef != null)
                 {
                     menu.CloseMenu();
                     SoundPlayer.clip = CancelNoise; SoundPlayer.Play();

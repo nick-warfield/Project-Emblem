@@ -39,7 +39,7 @@ public class Character : MonoBehaviour
 
     //keeps track of how many times a unit has been traumatized. The more they have been traumatized, the worse the effects and the more easily it happens.
     //units get tramatized from hitting 0HP, maxing stress, and accumliating injuries.
-    [HideInInspector] public int TraumaCounter = 0;
+    public int TraumaCounter = 0;
 
     //bad things happen to units at max stress
     protected virtual void BreakingPoint(int Will, int Luck)
@@ -75,7 +75,7 @@ public class Character : MonoBehaviour
         { Die(); }
 
         //Now start checking for different types of injury
-        RolledNum = RolledNum + (TraumaCounter * 10) - (Constitution * 2) - (Luck);
+        RolledNum = RolledNum + (TraumaCounter * 10) - (Constitution) - (Luck / 4);
 
         if (RolledNum < 0)
         { return; }
@@ -83,9 +83,9 @@ public class Character : MonoBehaviour
         { MinorInjury(RolledNum); }
         else if (RolledNum < 70)
         { SeriousInjury(RolledNum); }
-        else if (RolledNum < 100)
+        else if (RolledNum < 90)
         { PermanentInjury(RolledNum); }
-        else if (RolledNum < 150)
+        else if (RolledNum < 100)
         { FatalInjury(RolledNum); }
         else
         { Die(); }
@@ -182,7 +182,7 @@ public class Character : MonoBehaviour
 
     //used to instantiate default values in editor once a component is added/reset to a gameobject
     //set up sprites next
-    void Reset ()
+    protected virtual void Reset ()
     {
         tag = "Red Team";
         gameObject.layer = 13;

@@ -20,6 +20,7 @@ public class getUnitInfoAdvanced : MonoBehaviour
     }
     public void CloseMenu()
     {
+        unitRef = null;
         transform.SetParent(DisabledView.transform, false);
         //transform.parent = DisabledView.transform;
     }
