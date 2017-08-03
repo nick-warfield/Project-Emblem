@@ -16,6 +16,9 @@ public class LevelManager : Map
     [HideInInspector] public Terrain[] Path;
     [HideInInspector] public Terrain[] RedTiles;
 
+    InputManager inputs;
+    private void Start()
+    { inputs = FindObjectOfType<InputManager>(); }
 
     //Updates the path a unit will travel
     Terrain[] UpdateCurrentPath(Terrain NewTile, RPGClass Unit, Terrain[] CurrentPath, Terrain[] AvailableTiles)
@@ -197,18 +200,18 @@ public class LevelManager : Map
         if (SelectedUnit == null)
         {
             //On input, check to see if a unit can be selected
-            if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit") )
+            if (Input.GetKeyDown(inputs.FaceButton[0]) ) //(Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit") )
             {
                 SetSelectedUnit(Cursor.GetUnitAtCursorPosition(), LevelMap);
                 SoundPlayer.clip = SelectNoise; SoundPlayer.Play();
             }
 
             //on right click, bring up stats
-            if (Input.GetButtonDown("Fire2"))
+            if (Input.GetKeyDown(inputs.FaceButton[3]) )
             {
                 RPGClass temp = Cursor.GetUnitAtCursorPosition();
 
-                if (temp != null)
+                if (temp != null && temp != FindObjectOfType<getUnitInfoAdvanced>().unitRef)
                 {
                     getUnitInfoAdvanced menu = FindObjectOfType<getUnitInfoAdvanced>();
                     menu.PassStats(temp);
@@ -220,6 +223,15 @@ public class LevelManager : Map
                     SoundPlayer.clip = CancelNoise; SoundPlayer.Play();
                 }
 
+            }
+            else if (Input.GetKeyDown(inputs.FaceButton[1]) )
+            {
+                getUnitInfoAdvanced menu = FindObjectOfType<getUnitInfoAdvanced>();
+                if (menu.transform.parent == menu.EnabledView)
+                {
+                    menu.CloseMenu();
+                    SoundPlayer.clip = CancelNoise; SoundPlayer.Play();
+                }
             }
         }
 
@@ -243,7 +255,7 @@ public class LevelManager : Map
                 DisplayIndicator(Indicators[2], RedTiles);
 
                 //If the player wants to confirm movement, move the unit to the last tile on the path
-                if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
+                if (Input.GetKeyDown(inputs.FaceButton[0]))
                 {
                     RPGClass temp = Cursor.GetUnitAtCursorPosition();
                     if (temp == null || temp == SelectedUnit)
@@ -258,7 +270,7 @@ public class LevelManager : Map
                 }
 
                 //If the player wants to cancel the selection, deselect the unit
-                else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
+                if (Input.GetKeyDown(inputs.FaceButton[1]))
                 {
                     DeselectUnit(Character._State.Idle);
                     SoundPlayer.clip = CancelNoise; SoundPlayer.Play();
@@ -272,7 +284,7 @@ public class LevelManager : Map
 
 
                 //If the player wants to confirm an action
-                if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
+                if (Input.GetKeyDown(inputs.FaceButton[0]))
                 {
                     RPGClass TempUnit = Cursor.GetUnitAtCursorPosition();
 
@@ -297,7 +309,7 @@ public class LevelManager : Map
 
 
                 //If the player wants to cancel their move and put the unit back at the starting tile
-                else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
+                if (Input.GetKeyDown(inputs.FaceButton[1]))
                 {
                     Unit.x = Path[0].x; Unit.y = Path[0].y;
                     SetSelectedUnit(Unit, LevelMap);    //If I don't recalculate all of the pathfinding, the game crashes
@@ -322,11 +334,11 @@ public class LevelManager : Map
                     { Unit.CurrentState = Character._State.Waiting; }
 
                     //on submit action, start combat (only while not already in combat)
-                    else if (Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit"))
+                    if (Input.GetKeyDown(inputs.FaceButton[0]))
                     { cMan.StartCombat(); SoundPlayer.clip = SelectNoise; SoundPlayer.Play(); }
 
                     //on cancel action, go back 1 state
-                    else if (Input.GetButtonDown("Fire2") || Input.GetButtonDown("Cancel"))
+                    if (Input.GetKeyDown(inputs.FaceButton[1]))
                     { Unit.CurrentState = Character._State.SelectingAction; menu.CloseMenu(); SoundPlayer.clip = CancelNoise; SoundPlayer.Play(); }
                 }
 

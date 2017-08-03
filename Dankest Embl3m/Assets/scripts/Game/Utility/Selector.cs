@@ -6,10 +6,10 @@ public class Selector : MonoBehaviour
 {
     [HideInInspector]
     public int x, y;
-    float x2, y2;
     Vector3 coordinates;
     Terrain[,] MapRef;
     AudioSource soundMaker;
+    InputManager inputs;
 
 
     public RPGClass GetUnitAtCursorPosition()
@@ -31,9 +31,6 @@ public class Selector : MonoBehaviour
 
     private void Start()
     {
-        x2 = x = Mathf.RoundToInt(transform.position.x);
-        y2 = y = Mathf.RoundToInt(transform.position.y);
-
         transform.position = new Vector3(x, y);
 
         Cursor.visible = false;
@@ -41,11 +38,28 @@ public class Selector : MonoBehaviour
         MapRef = FindObjectOfType<Map>().LevelMap;
 
         soundMaker = GetComponent<AudioSource>();
+        inputs = FindObjectOfType<InputManager>();
     }
 
 
     private void Update()
     {
+        MoveCommand[] commands = inputs.MoveInputHandler();
+        if (commands.Length > 0)
+        {
+            for (int i = 0; i < commands.Length; i++)
+            { commands[i].setSensitivity(1); commands[i].Execute(gameObject); }
+
+            x = Mathf.RoundToInt(transform.position.x); y = Mathf.RoundToInt(transform.position.y);
+
+            if (x < 0) { x = 0; } else if (x >= MapRef.GetLength(0)) { x = MapRef.GetLength(0) - 1; }
+            if (y < 0) { y = 0; } else if (y >= MapRef.GetLength(1)) { y = MapRef.GetLength(1) - 1; }
+
+            transform.position = new Vector3(x, y, 0);
+
+            soundMaker.Play();
+        }
+        /*
         coordinates = Camera.main.ScreenToWorldPoint(new Vector3 (Input.mousePosition.x, Input.mousePosition.y) );
 
         x2 = coordinates.x;
@@ -63,6 +77,7 @@ public class Selector : MonoBehaviour
         if (transform.position.x != x || transform.position.y != y) { soundMaker.Play(); }
 
         transform.position = new Vector3(x, y, -2);
+        */
     }
 
 }

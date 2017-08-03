@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class getUnitInfoAdvanced : MonoBehaviour
 {
-    RPGClass unitRef;
+    public RPGClass unitRef;
     public GameObject DisabledView;
     public GameObject EnabledView;
 
