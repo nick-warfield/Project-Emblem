@@ -9,8 +9,8 @@ public class InputManager : MonoBehaviour
     public float LeftVertical, LeftHorizontal, XboxTriggers, XboxRightHorizontal, XboxRightVertical, PS4RightHorizontal, PS4RightVertical;
 
     public float Sensitivity;
-    public KeyCode[] MoveButton, PanButton, ZoomButton, FaceButton;
-
+    public KeyCode[] MoveButton, PanButton, ZoomButton, SelectButton, CancelButton, InfoButton, HighlightButton, OptionButton, FaceButton;
+    
 
     //Declare all of my commands since I will be calling them a bunch
     protected MoveCommand left = new LeftCommand();
@@ -89,7 +89,6 @@ public class InputManager : MonoBehaviour
         return pans.ToArray();
     }
 
-
     public virtual ZoomCommand ZoomInputHandler()
     {
         //this command needs to get called every frame for lerping. Setting the zoomValue will adjust the size being zoomed to
@@ -98,12 +97,54 @@ public class InputManager : MonoBehaviour
         if (Input.GetAxis("Xbox Triggers") != 0)
         { zoom.newZoomValue(Input.GetAxis("Xbox Triggers")); }
 
+        //check keyboard inputs here
+        else if (Input.GetKey(ZoomButton[0]) || Input.GetKey(ZoomButton[1]) )
+        {
+            float z = 0;
+            if (Input.GetKey(ZoomButton[0]) ) { z += 0.5f; }
+            if (Input.GetKey(ZoomButton[1]) ) { z -= 0.5f; }
+
+            zoom.newZoomValue(z);
+        }
+
         //check mouse inputs here
         else
         { zoom.newZoomValue(Input.mouseScrollDelta.y / 5); }
 
         //return the zoom command. Zoomvalue will be 0 if the input checks failed
         return zoom;
+    }
+
+
+
+
+    public bool CheckSelectDown()
+    {
+        for (int i = 0; i < SelectButton.Length; i++)
+        { if (Input.GetKeyDown(SelectButton[i]) ) { return true; } }
+
+        return false;
+    }
+    public bool CheckCancelDown()
+    {
+        for (int i = 0; i < CancelButton.Length; i++)
+        { if (Input.GetKeyDown(CancelButton[i])) { return true; } }
+
+        return false;
+    }
+    public bool CheckInfoDown()
+    {
+        for (int i = 0; i < InfoButton.Length; i++)
+        { if (Input.GetKeyDown(InfoButton[i])) { return true; } }
+
+        return false;
+    }
+    public bool CheckOptionDown()
+    {
+        for (int i = 0; i < OptionButton.Length; i++)
+        { if (Input.GetKeyDown(OptionButton[i])) { return true; } }
+
+        return false;
     }
 
     //Show Axis Values in the inspector

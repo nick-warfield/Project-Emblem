@@ -200,14 +200,14 @@ public class LevelManager : Map
         if (SelectedUnit == null)
         {
             //On input, check to see if a unit can be selected
-            if (Input.GetKeyDown(inputs.FaceButton[0]) ) //(Input.GetButtonDown("Fire1") || Input.GetButtonDown("Submit") )
+            if (inputs.CheckSelectDown() )
             {
                 SetSelectedUnit(Cursor.GetUnitAtCursorPosition(), LevelMap);
                 SoundPlayer.clip = SelectNoise; SoundPlayer.Play();
             }
 
             //on right click, bring up stats
-            if (Input.GetKeyDown(inputs.FaceButton[3]) )
+            if (inputs.CheckInfoDown() )
             {
                 RPGClass temp = Cursor.GetUnitAtCursorPosition();
 
@@ -224,7 +224,7 @@ public class LevelManager : Map
                 }
 
             }
-            else if (Input.GetKeyDown(inputs.FaceButton[1]) )
+            else if (inputs.CheckCancelDown() )
             {
                 getUnitInfoAdvanced menu = FindObjectOfType<getUnitInfoAdvanced>();
                 if (menu.unitRef != null)
@@ -255,7 +255,7 @@ public class LevelManager : Map
                 DisplayIndicator(Indicators[2], RedTiles);
 
                 //If the player wants to confirm movement, move the unit to the last tile on the path
-                if (Input.GetKeyDown(inputs.FaceButton[0]))
+                if (inputs.CheckSelectDown() )
                 {
                     RPGClass temp = Cursor.GetUnitAtCursorPosition();
                     if (temp == null || temp == SelectedUnit)
@@ -270,7 +270,7 @@ public class LevelManager : Map
                 }
 
                 //If the player wants to cancel the selection, deselect the unit
-                if (Input.GetKeyDown(inputs.FaceButton[1]))
+                if (inputs.CheckCancelDown() )
                 {
                     DeselectUnit(Character._State.Idle);
                     SoundPlayer.clip = CancelNoise; SoundPlayer.Play();
@@ -284,7 +284,7 @@ public class LevelManager : Map
 
 
                 //If the player wants to confirm an action
-                if (Input.GetKeyDown(inputs.FaceButton[0]))
+                if (inputs.CheckSelectDown() )
                 {
                     RPGClass TempUnit = Cursor.GetUnitAtCursorPosition();
 
@@ -309,7 +309,7 @@ public class LevelManager : Map
 
 
                 //If the player wants to cancel their move and put the unit back at the starting tile
-                if (Input.GetKeyDown(inputs.FaceButton[1]))
+                if (inputs.CheckCancelDown() )
                 {
                     Unit.x = Path[0].x; Unit.y = Path[0].y;
                     SetSelectedUnit(Unit, LevelMap);    //If I don't recalculate all of the pathfinding, the game crashes
@@ -334,11 +334,11 @@ public class LevelManager : Map
                     { Unit.CurrentState = Character._State.Waiting; }
 
                     //on submit action, start combat (only while not already in combat)
-                    if (Input.GetKeyDown(inputs.FaceButton[0]))
+                    if (inputs.CheckSelectDown() )
                     { cMan.StartCombat(); SoundPlayer.clip = SelectNoise; SoundPlayer.Play(); }
 
                     //on cancel action, go back 1 state
-                    if (Input.GetKeyDown(inputs.FaceButton[1]))
+                    if (inputs.CheckCancelDown() )
                     { Unit.CurrentState = Character._State.SelectingAction; menu.CloseMenu(); SoundPlayer.clip = CancelNoise; SoundPlayer.Play(); }
                 }
 
