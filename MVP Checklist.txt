@@ -1,0 +1,36 @@
+Stuff I need for a Minimal Viable Product (in no particular order):
+
+Auido:
+ -Main Sound track. Music goes a long way to tie everything together.
+ -Hit/Hurt noises. I don't need anything too fancy, just something to add some punch to the combat.
+
+Basic Functionality:
+ -Turn manager. Right now there is no real structure to order and who can do what when.
+ -AI. The player needs an opponent to go up against. This actually entails a lot more than it seems. The AI won't interact      with some systems (like it shouldn't open up any menus) and it will need some anit-cheat precautions (right now that just    means generating and saving a seed so that players can't reset the enemies turn until they get a result they like).
+ -Input Manager. This could probably be skimped for MVP. But I'll need it eventually and switching to a new system can be       time consuming. How soon I do this, depends on how much stuff I make that will need to depend on it.
+
+Features:
+ -5 Units. I need 1 unit for each weapon type + a healer unit. With those I'll have more than enough to create interesting    scenarios.
+ -Trait System. This is the big thing that I want to add to make battles more dynamic and offer different ways a unit can    progress. This will probably take a lot of work but getting it something recognizable shouldn't take more than a week.
+ -Injury System. Really a part of the trait system. Because you may lose control of a unit, this system exsists to soften    the punishment that can have. I also want it to add another way that units can change via permanent injuries.
+ -Support System. Getting it to the level of the GBA Fire Emblem games would take work but not an enormous amount. What I    want to do is expand upon it, and make it have some sort of interaction with the trait and injury system.
+ -Magic/Element System. Go look at the Breath of the Wild GDC talk if I forget where I was going with this. I wanted to    revamp the magic system into something that could change the enviornment of the map rather than just another part of    combat. The magic has always been something that added more complexity than depth. I think by making it a system to    manipulate the battlefield I can make it something very interesting.
+
+Art:
+ -A few tiles. Stuff like rivers, doors, chests, and so on. I can probably get by with just stuff I need for outdoor    enviornments for now. But eventually I'll need indoor variations of the outdoor tiles.
+ -Animations, like a ton. There is a lot of animation work that needs to get, and it all needs to be pretty high quality    too. Recreating those cool combat scenes was one of the reasons I wanted to make something similar to the GBA Fire Emblem    titles. I missed them now that they have gone to full 3D.
+ -Unit Art. Each unit has a lot of artwork tied to it. They need a portrait, idle animation, attack animation, dodge/block    frame, at the very minimum. Eventually I would like them to have hover animations, critcal hit animations, ranged attack    animations, ranged critical hit animations, and probably some more that I am forgetting.
+ -Character Art. The characters will need custom portaits to help the player connect to them.
+ -Weapon Art. I need weapon icons to help players identify weapons faster.
+ -Custom Cursor. Pretty low priority, but a nice touch.
+
+Tools:
+ -Map Editor. Before I can seriously ramp up production on levels, I'll need a proper editor to takle it. The one I made is    very barebones and really just saves me time placing tiles down in the beginning. I want something that will help me make    levels, not get in the way.
+-2D Animator. I can already see the need to have something other than the defualt inspector editor. I would want something    that made it easy to add in sprites/sprite atlasses to create animations. I would also want something that offered me a    great bit of control over frame timings and transitions.
+-Unit Editor. This probably sounds like more than what I actually want. I mostly want a way to hide all the information I    don't need to change constantly in the inspector. I also want something that presents my structures a bit better, but    what I have right now is already pretty good.
+
+
+
+
+
+

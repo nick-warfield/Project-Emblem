@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class MoveCamera : MonoBehaviour
 {
-    Camera cam;
-    PixelPerfectCamera PixelCam;
-    public float Sensitivity = 0.5f;
+    //Camera cam;
+    //PixelPerfectCamera PixelCam;
+    public float Sensitivity = 0.5f, ZoomSpeed = 2f;
     float x, y;
+    InputManager inputs;
 	
 	// Update is called once per frame
 	void Update ()
@@ -19,29 +20,26 @@ public class MoveCamera : MonoBehaviour
     //Grab Reference to attatched Camera
     private void Start()
     {
-        cam = GetComponent<Camera>();
-        PixelCam = GetComponent<PixelPerfectCamera>();
+        //cam = GetComponent<Camera>();
+        //PixelCam = GetComponent<PixelPerfectCamera>();
+        inputs = FindObjectOfType<InputManager>();
     }
     
     //Camera Controllers
     void PanCamera()
     {
-        x = transform.position.x; y = transform.position.y;
+        MoveCommand[] command = inputs.CameraInputHandler();
+        if (command.Length > 0)
+        {
+            for (int i = 0; i < command.Length; i++)
+            { command[i].setSensitivity(inputs.Sensitivity); command[i].Execute(gameObject); }
+        }
 
-        x += (System.Math.Sign(Input.GetAxis("Horizontal")) * Sensitivity);
-        y += (System.Math.Sign(Input.GetAxis("Vertical")) * Sensitivity);
-
-        transform.position = new Vector3(x, y, transform.position.z);
     }
     void ZoomCamera()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") != 0)
-        {
-            PixelCam.targetCameraHalfHeight -= Mathf.Sign(Input.GetAxis("Mouse ScrollWheel"));
-            PixelCam.targetCameraHalfHeight = Mathf.Clamp(PixelCam.targetCameraHalfHeight, 2, 10);
-        }
-
-        float newZoom = PixelCam.adjustCameraFOV(true);
-        cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, newZoom, Time.smoothDeltaTime * 4f);
+        ZoomCommand zoom = inputs.ZoomInputHandler();
+        zoom.setSensitivity(ZoomSpeed);
+        zoom.Execute(gameObject);
     }
 }

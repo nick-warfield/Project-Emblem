@@ -6,11 +6,13 @@ public class Selector : MonoBehaviour
 {
     [HideInInspector]
     public int x, y;
-    float x2, y2;
     Vector3 coordinates;
     Terrain[,] MapRef;
+    AudioSource soundMaker;
+    InputManager inputs;
 
 
+    //returns the unit with the same x and y coordinates as the cursor.
     public RPGClass GetUnitAtCursorPosition()
     {
         //Grabs all of the unit objects in the scene
@@ -30,33 +32,48 @@ public class Selector : MonoBehaviour
 
     private void Start()
     {
-        x2 = x = Mathf.RoundToInt(transform.position.x);
-        y2 = y = Mathf.RoundToInt(transform.position.y);
-
+        //snap position
+        x = Mathf.RoundToInt(transform.position.x);
+        y = Mathf.RoundToInt(transform.position.y);
         transform.position = new Vector3(x, y);
 
+        //cursor should not show up
         Cursor.visible = false;
 
+        //grab references for methods
         MapRef = FindObjectOfType<Map>().LevelMap;
+        soundMaker = GetComponent<AudioSource>();
+        inputs = FindObjectOfType<InputManager>();
     }
 
 
     private void Update()
     {
-        coordinates = Camera.main.ScreenToWorldPoint(new Vector3 (Input.mousePosition.x, Input.mousePosition.y) );
+        //grab the movement requests from the input manager
+        MoveCommand[] commands = inputs.MoveInputHandler();
 
-        x2 = coordinates.x;
-        y2 = coordinates.y;
+        //if new requests have been made, execute them
+        if (commands.Length > 0)
+        {
+            int oldx = x, oldy = y;
 
-        x = Mathf.RoundToInt(x2);
-        y = Mathf.RoundToInt(y2);
+            //set sensitivity to 1 so that the cursor moves in 1 unit intervals. 
+            //Then execute each command, this will create diagonal movement if both vertical and horizontal commands are issued.
+            for (int i = 0; i < commands.Length; i++)
+            { commands[i].setSensitivity(1); commands[i].Execute(gameObject); }
 
+            //next, check to make sure the cursor stays within bounds
+            x = Mathf.RoundToInt(transform.position.x); y = Mathf.RoundToInt(transform.position.y);
 
+            if (x < 0) { x = 0; } else if (x >= MapRef.GetLength(0)) { x = MapRef.GetLength(0) - 1; }
+            if (y < 0) { y = 0; } else if (y >= MapRef.GetLength(1)) { y = MapRef.GetLength(1) - 1; }
 
-        if (x < 0) { x = 0; } else if (x >= MapRef.GetLength(0)) { x = MapRef.GetLength(0) - 1; }
-        if (y < 0) { y = 0; } else if (y >= MapRef.GetLength(1)) { y = MapRef.GetLength(1) - 1; }
+            transform.position = new Vector3(x, y, 0);
 
-        transform.position = new Vector3(x, y, -2);
+            //then play a little sound if the position got changed
+            if (x != oldx || y != oldy)
+            { soundMaker.Play(); }
+        }
     }
 
 }
