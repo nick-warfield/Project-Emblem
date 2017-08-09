@@ -72,6 +72,7 @@ public class Animator2D : MonoBehaviour
     public CharacterArt SpriteSheets;
 
     SpriteRenderer Renderer;
+    AudioSource BackTrack;
     float TimeStamp = 1;
     int CurrentFrame = 0;
 
@@ -82,9 +83,9 @@ public class Animator2D : MonoBehaviour
     //Loops through an array of sprites at a certain speed
     public void Animate(Sprite[] Animation, float FrameSpeed)
     {
-        if (Time.time >= TimeStamp)
+        if (BackTrack.time >= TimeStamp)
         {
-            TimeStamp = Time.time + FrameSpeed;
+            TimeStamp = BackTrack.time + FrameSpeed;
             CurrentFrame++;
 
             if (CurrentFrame >= Animation.Length)
@@ -92,6 +93,8 @@ public class Animator2D : MonoBehaviour
 
             Renderer.sprite = Animation[CurrentFrame];
         }
+        if (BackTrack.timeSamples == BackTrack.clip.samples - 1) { TimeStamp = 0; }
+
     }
 
     // Update is called once per frame
@@ -105,5 +108,6 @@ public class Animator2D : MonoBehaviour
     private void Start()
     {
         Renderer = gameObject.GetComponent<SpriteRenderer>();
+        BackTrack = GameObject.Find("Main Camera").GetComponent<AudioSource>();
     }
 }
