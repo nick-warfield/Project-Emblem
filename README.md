@@ -1,2 +1,2 @@
-# Darkest-Emblem
-Combing the gameplay from an old-school Fire Emblem game (along with the advancements I like) with a more tuned stress system from Darkest Dungeon.
+# Project-Emblem
+Combining the gameplay from an old-school Fire Emblem game with a stress system similar to Darkest Dungeon.
