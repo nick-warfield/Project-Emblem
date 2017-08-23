@@ -255,7 +255,11 @@ public class RPGClass : Character
                 for (int j = 0; j < 8; j++)
                 {
                     if (WeaponProficencies[j].WeaponCategory == temp.WeaponCategory && WeaponProficencies[j].WeaponRank >= temp.WeaponRank)
-                    { print(temp + "Equiped"); i = 10; return temp; }
+                    {
+                        //print(temp + "Equiped");
+                        i = 10;
+                        return temp;
+                    }
                 }
             }
         }

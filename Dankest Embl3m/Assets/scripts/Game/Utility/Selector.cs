@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Selector : MonoBehaviour
+public class Selector : TacticsBehaviour
 {
     [HideInInspector]
     public int x, y;
@@ -29,6 +29,14 @@ public class Selector : MonoBehaviour
         return null;
     }
 
+    void sample(TurnManager.TeamColor team, int Turn)
+    { }//print(team + " is blue and the current turn"); }
+
+    private void Awake()
+    {
+        TurnManager tMan = FindObjectOfType<TurnManager>();
+        tMan.OnPhaseStart += sample;
+    }
 
     private void Start()
     {

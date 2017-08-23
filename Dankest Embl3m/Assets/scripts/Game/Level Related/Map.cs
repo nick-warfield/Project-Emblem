@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//MAPS MUST BE RECTANGLES WITH NO HOLES
+//MAPS MUST BE RECTANGLES WITH NO HOLES - Edit: I think I fixed this, but they should be designed that way anyway for clear boundaries.
 //Creates and holds the map data so that it can be accessed and altered as needed.
 public class Map : TacticsBehaviour
 {
     public Terrain[,] LevelMap;   //Holds the terrain data. Formatted so that indexes correspond to transforms.
 
+    //OBSOLETE
     //collides a sphere against the node of a tile, then stores the gameobject collided with.
     protected void StoreTilesIntoArray()
     {

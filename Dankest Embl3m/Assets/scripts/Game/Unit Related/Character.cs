@@ -11,9 +11,11 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    //Enums for managing the State and Status of the Unit
+    //Enums for managing the State and Status of the Unit.                          Rescued should be a component that sets state to waiting
     public enum _State { Idle, Selected, Walking, Waiting, InCombat, SelectingAction, Rescued };
     public _State CurrentState = _State.Idle;
+
+    //I should probably use components for this stuff.
     public enum StatusEffects { None, Tramatized, Downed, Dead };
     public StatusEffects Condition;
 
@@ -201,10 +203,15 @@ public class Character : MonoBehaviour
         */
     }
 
+    void ez(TurnManager.TeamColor t, int Turn) { }//{ print(gameObject.name + " has Subscribed to Turn Events."); }
+
     private void Awake()
     {
         //Make sure Coordinates are initialized early so that they can be referenced by managers in their start functions
         UpdateCoordinatesWithTransformPosition();
+
+        //Subscribe to Turn Events
+        FindObjectOfType<TurnManager>().OnPhaseStart += ez;
     }
 
     SpriteRenderer Renderer;
