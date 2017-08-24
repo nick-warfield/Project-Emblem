@@ -335,7 +335,7 @@ public class LevelManager : Map
                 if (!cMan.SimulateCombat)
                 {
                     if (menu.transform.parent.name == menu.DisabledView.name)
-                    { Unit.CurrentState = Character._State.Waiting; }
+                    { DeselectUnit(Character._State.Waiting); }     //Unit.CurrentState = Character._State.Waiting; }
 
                     //on submit action, start combat (only while not already in combat)
                     if (inputs.CheckSelectDown() )

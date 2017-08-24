@@ -83,18 +83,24 @@ public class Animator2D : MonoBehaviour
     //Loops through an array of sprites at a certain speed
     public void Animate(Sprite[] Animation, float FrameSpeed)
     {
+        //reset timestamp if the track has been looped
+        if (Mathf.Round(BackTrack.time) == 0 && TimeStamp > BackTrack.clip.length) { TimeStamp = 0; }
+
+        //check if enough time has passed to update the frame
         if (BackTrack.time >= TimeStamp)
         {
+            //determine when the next update will be
             TimeStamp = BackTrack.time + FrameSpeed;
+            //advance the animation
             CurrentFrame++;
 
+            //go back to the first frame if the end of the animation has been reached
             if (CurrentFrame >= Animation.Length)
             { CurrentFrame = 0; }
 
+            //update the sprite to display the new frame
             Renderer.sprite = Animation[CurrentFrame];
         }
-        if (BackTrack.timeSamples == BackTrack.clip.samples - 1) { TimeStamp = 0; }
-
     }
 
     // Update is called once per frame
