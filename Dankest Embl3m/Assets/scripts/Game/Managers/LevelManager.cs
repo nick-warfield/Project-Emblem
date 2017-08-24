@@ -202,8 +202,12 @@ public class LevelManager : Map
             //On input, check to see if a unit can be selected
             if (inputs.CheckSelectDown() )
             {
-                SetSelectedUnit(Cursor.GetUnitAtCursorPosition(), LevelMap);
-                SoundPlayer.clip = SelectNoise; SoundPlayer.Play();
+                RPGClass temp = Cursor.GetUnitAtCursorPosition();
+                if (temp.Team == FindObjectOfType<TurnManager>().CurrentTeam && temp.CurrentState != Character._State.Waiting)
+                {
+                    SetSelectedUnit(temp, LevelMap);
+                    SoundPlayer.clip = SelectNoise; SoundPlayer.Play();
+                }
             }
 
             //on right click, bring up stats

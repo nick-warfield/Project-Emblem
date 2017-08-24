@@ -21,27 +21,10 @@ public class TurnManager : MonoBehaviour
 
     //delegate and events to let stuff know that a turn has begun and so on. still figuring this stuff out.
     public delegate void TurnEventHandler(TeamColor CurrentTeam, int TurnCount);
-    public event TurnEventHandler OnPhaseStart;
-    public event TurnEventHandler OnPhaseEnd;
-
-    public void HandleTurnEvent (TeamColor CurrentTeam, int TurnCount)
-    { print(CurrentTeam + " hit event"); }
-
-    //invokes the events that need to be triggered on turn swap
-    void TurnUpkeep (TeamColor TeamInControl)
-    {
-
-    }
-
-    /*
-    public delegate void OnPhaseStart(GameObject GameActor);
-    public delegate void OnPhaseEnd(GameObject GameActor);
-
-    public delegate void OnTeamPhaseStart(GameObject GameActor, string CurrentTeamTurn);
-    public delegate void OnTeamPhaseEnd(GameObject GameActor, string CurrentTeamTurn);
-
-    public delegate void OnAction(GameObject GameActor);
-    /**/
+    public event TurnEventHandler PhaseStart;
+    public event TurnEventHandler PhaseStartLate;
+    public event TurnEventHandler PhaseEnd;
+    public event TurnEventHandler PhaseEndLate;
 
 
     //initialize the team lists. There will usually only be 2, but this will allow up to 4 different teams with a predetermined order.
@@ -134,13 +117,10 @@ public class TurnManager : MonoBehaviour
     {
         InitializeTeamLists();
         //PrintTeams();
-
-        OnPhaseStart += new TurnEventHandler(HandleTurnEvent);
-        OnPhaseEnd += new TurnEventHandler(HandleTurnEvent);
     }
     private void Start()
     {
-        OnPhaseStart.Invoke(CurrentTeam, TurnCount);
+        PhaseStart.Invoke(CurrentTeam, TurnCount);
     }
 
     // Update is called once per frame
@@ -151,11 +131,15 @@ public class TurnManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P) || TeamActions <= 0)
         {
             //Trigger End Turn Events (eg: spawn units)
-            //OnPhaseEnd.Invoke(CurrentTeam, TurnCount);
+            if (PhaseEnd != null) { PhaseEnd.Invoke(CurrentTeam, TurnCount); }
+            if (PhaseEndLate != null) { PhaseEndLate.Invoke(CurrentTeam, TurnCount); }
+
             //Pass Turn Control over to the next valid team.
             PassTurnControl();
+
             //Trigger Start Turn Events (eg: heal from fort)
-            OnPhaseStart.Invoke(CurrentTeam, TurnCount);
+            if (PhaseStart != null) { PhaseStart.Invoke(CurrentTeam, TurnCount); }
+            if (PhaseStartLate != null) { PhaseStartLate.Invoke(CurrentTeam, TurnCount); }
         }
     }
 }

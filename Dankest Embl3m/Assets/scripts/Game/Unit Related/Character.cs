@@ -15,6 +15,9 @@ public class Character : MonoBehaviour
     public enum _State { Idle, Selected, Walking, Waiting, InCombat, SelectingAction, Rescued };
     public _State CurrentState = _State.Idle;
 
+    //Enum for checking which team a unit is on
+    [HideInInspector] public TurnManager.TeamColor Team = TurnManager.TeamColor.Red;
+
     //I should probably use components for this stuff.
     public enum StatusEffects { None, Tramatized, Downed, Dead };
     public StatusEffects Condition;
@@ -202,16 +205,36 @@ public class Character : MonoBehaviour
         charBOX.size = new Vector3(0.5f, 0.5f, 0.5f);
         */
     }
-
-    void ez(TurnManager.TeamColor t, int Turn) { }//{ print(gameObject.name + " has Subscribed to Turn Events."); }
-
     private void Awake()
     {
         //Make sure Coordinates are initialized early so that they can be referenced by managers in their start functions
         UpdateCoordinatesWithTransformPosition();
 
+        //Assign team based on gameobject tag
+        switch (tag)
+        {
+            case    "Red Team": Team = TurnManager.TeamColor.Red;    break;
+            case   "Blue Team": Team = TurnManager.TeamColor.Blue;   break;
+            case  "Green Team": Team = TurnManager.TeamColor.Green;  break;
+            case "Yellow Team": Team = TurnManager.TeamColor.Yellow; break;
+
+            default: print("Error: " + gameObject.name + " is not assigned to a team. Object Will Be Destroyed."); break;
+        }
+
         //Subscribe to Turn Events
-        FindObjectOfType<TurnManager>().OnPhaseStart += ez;
+        TurnManager tMan = FindObjectOfType<TurnManager>();
+        tMan.PhaseStart += OnPhaseStart;
+        tMan.PhaseEnd += OnPhaseEnd;
+    }
+
+    //Characters will update first, that way components (like injuries) can override and modify behaviour.
+    protected virtual void OnPhaseStart(TurnManager.TeamColor CurrentTeamTurn, int TurnCount)
+    {
+        CurrentState = _State.Idle;
+    }
+    protected virtual void OnPhaseEnd(TurnManager.TeamColor CurrentTeamTurn, int TurnCount)
+    {
+
     }
 
     SpriteRenderer Renderer;
@@ -227,7 +250,6 @@ public class Character : MonoBehaviour
         //Assign the renderer component for reference
         Renderer = GetComponent<SpriteRenderer>();
     }
-
     protected void Update()
     {
         //float z = -1 + (y / 100f);

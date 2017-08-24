@@ -35,7 +35,7 @@ public class Selector : TacticsBehaviour
     private void Awake()
     {
         TurnManager tMan = FindObjectOfType<TurnManager>();
-        tMan.OnPhaseStart += sample;
+        tMan.PhaseStart += sample;
     }
 
     private void Start()
