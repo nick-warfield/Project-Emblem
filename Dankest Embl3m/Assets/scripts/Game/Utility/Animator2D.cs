@@ -100,6 +100,13 @@ public class Animator2D : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (gameObject.GetComponent<Character>() != null)
+        {
+            if (gameObject.GetComponent<Character>().CurrentState == Character._State.Waiting)
+            { Renderer.color = new Color(0.6f, 0.6f, 0.6f); }
+            else
+            { Renderer.color = new Color(1f, 1f, 1f); }
+        }
         Animate(SpriteSheets.Idle, 1f);
     }
 
