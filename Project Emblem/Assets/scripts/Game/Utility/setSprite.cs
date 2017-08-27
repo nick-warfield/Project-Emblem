@@ -36,7 +36,7 @@ class setSprite : MonoBehaviour
             if (current >= sprits.Length) { current = 0; }
 
             ren.sprite = sprits[current];
-
+            print(ren.sprite.texture.height);
             timeStamp = Time.time + 1f;
         }
 	}

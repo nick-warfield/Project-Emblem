@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Hidden/PaletteSwapLookup"
+Shader "Sprite/PaletteSwapLookup"
 {
 	Properties
 	{
@@ -48,8 +48,6 @@ Shader "Hidden/PaletteSwapLookup"
 			{
 				float x = tex2D(_MainTex, i.uv).r;
 				float y = tex2D(_MainTex, i.uv).a;
-			
-			//if (tex2D(_MainTex, i.uv).a < 1) { return fixed4(0, 0, 0, 0); }
 				return tex2D(_PaletteTex, float2(x, y));
 			}
 

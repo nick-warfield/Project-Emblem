@@ -1,4 +1,4 @@
-﻿Shader "Sprites/Palette Swap"
+﻿Shader "Hidden/Palette Swap"
 {
 	Properties
 	{
