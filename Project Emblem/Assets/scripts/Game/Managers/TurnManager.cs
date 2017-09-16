@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
-    List<RPGClass>[] Team = new List<RPGClass>[4]       //an array of lists that holds the Units on each team.
+    readonly public List<RPGClass>[] Team = new List<RPGClass>[4]       //an array of lists that holds the Units on each team.
         {
             new List<RPGClass> { },
             new List<RPGClass> { },
